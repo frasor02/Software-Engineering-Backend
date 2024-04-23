@@ -1,0 +1,22 @@
+{
+  "name": "ricerca-parcheggio-efficace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Frasor2002/Ricerca-Parcheggio-Efficace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Frasor2002/Ricerca-Parcheggio-Efficace/issues"
+  },
+  "homepage": "https://github.com/Frasor2002/Ricerca-Parcheggio-Efficace#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

@@ -2,10 +2,10 @@ require('dotenv').config()
 const app = require('./app/app.js');
 const mongoose = require('mongoose');
 
-
+//
 const port = process.env.PORT || 3000;
 
-// Configure mongoose
+// Configura mongoose per connettersi al server
 app.locals.db = mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 .then ( () => {
     

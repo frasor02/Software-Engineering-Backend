@@ -6,7 +6,8 @@ const parcheggioSchema = mongoose.Schema({
     nome : { type: String, required: true},
     posizione : { type: pointSchema, required: true },
     numPosti : { type: Number, required: true },
-    isCoperto : { type: Boolean, required: true}
-});
+    isCoperto : { type: Boolean, required: true},
+    statoParcheggio : { type: String, required: true, enum: ["Disponibile", "Non disponibile"]}
+}, { discriminatorKey : '_type' });
 
 module.exports = mongoose.model('Parcheggio', parcheggioSchema);

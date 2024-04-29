@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors')
 
+const parcheggioRoutes = require('./routes/parcheggio')
+
 // Configurazione middleware di parsing
 app.use(express.json());
 
@@ -13,6 +15,8 @@ app.use((req,res,next) => {
 
 // Richieste CORS
 app.use(cors())
+
+app.use('/parcheggio', parcheggioRoutes);
 
 // Handler errore 404 NOT FOUND di default
 app.use((req, res) => {

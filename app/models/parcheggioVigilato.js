@@ -3,7 +3,7 @@ const Parcheggio = require('../models/parcheggio');
 const postiOccupatiSchema = require('./postiOccupati');
 
 // Schema che rappresenta la classe Parcheggio Contingentato
-const parcheggioVigilato = Parcheggio.discriminator("ParcheggioVigila", new mongoose.Schema({
+const parcheggioVigilato = Parcheggio.discriminator("ParcheggioVigilato", new mongoose.Schema({
     postiOccupati: postiOccupatiSchema,
     tariffa: { type: Number, required: true}
 }));

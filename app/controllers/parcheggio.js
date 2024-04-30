@@ -8,6 +8,22 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
+// Utility GET
+exports.parcheggio_get_all = (req, res) => {
+    Parcheggio.find({})
+    .exec()
+    .then(docs => {
+        console.log(docs);
+        res.status(200).json(docs)
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            message: err
+        })
+    });
+};
+
 // Funzione che implementa la chiamata POST a /parcheggio
 exports.parcheggio_post = (req, res) => {
     let parcheggio;
@@ -115,15 +131,56 @@ exports.parcheggio_post = (req, res) => {
 
 // Funzione che implementa la chiamata PATCH a /parcheggio/:parcheggioId
 exports.parcheggio_patch = (req, res) => {
-    const id = req.params.parcheggioId;
-    //implementazione con switch
-    //Parcheggio.updateOne({_id: id}, { $set: {nome: req.body.newNome}})
-    /*.exec()
-    .then(res=>{res.status(200).json({message:"OK"})})
-    .catch();*/
+    let id;
+    try {
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            throw new Error("Wrong id")
+        }
+    } catch(err){
+        res.status(400).json({
+            message: err.message
+        });
+    };
+    const updateOps = {};
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
+    }
+    Parcheggio.findByIdAndUpdate(id, updateOps)
+    .exec()
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            message: err
+        });
+    });
 };
 
 //Funzione che implementa la chiamata DELETE a /parcheggio/:parcheggioId
 exports.parcheggio_delete = (req, res) => {
-    const id = req.params.parcheggioId;
+    let id;
+    try {
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            throw new Error("Wrong id")
+        }
+    } catch(err){
+        res.status(400).json({
+            message: err.message
+        });
+    };
+    Parcheggio.findByIdAndDelete(id)
+    .exec()
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch( err => {
+        console.log(err);
+        res.status(500).json({
+            message: err
+        });
+    });
 }

@@ -6,7 +6,7 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
-// Utility GET
+// Funzione che implementa la chiamata GET a /parcheggio
 exports.parcheggio_get_all = (req, res) => {
     Parcheggio.find({})
     .select("_id _type nome")
@@ -16,12 +16,12 @@ exports.parcheggio_get_all = (req, res) => {
             count: docs.length,
             parcheggi: docs.map(doc =>{
                 return {
-                    id: doc._id,
-                    type: doc._type,
+                    _id: doc._id,
+                    _type: doc._type,
                     nome: doc.nome,
                     request: {
                         type: "GET",
-                        url: "http://localhost:" + process.env.PORT + "/parcheggio:" + doc._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + doc._id
                     }
                 }
             })
@@ -151,14 +151,22 @@ exports.parcheggio_post = (req, res) => {
     }
     console.log(parcheggio);
     parcheggio.save().then(result => {
-        console.log(result);
         res.status(201).json({
-            createdParcheggio: parcheggio
-        });
-    }).catch(err =>{
+            message: "Created Parcheggio Successfully",
+            createdParcheggio:{ 
+                    _id: result._id,
+                    _type: result._type,
+                    nome: result.nome,
+                    request: {
+                        type: "GET",
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + result._id
+                    }
+                }
+            })}
+    ).catch(err =>{
         console.log(err);
         res.status(400).json({
-            error: err
+            error: err.message
     })});
 };
 
@@ -176,18 +184,36 @@ exports.parcheggio_patch = (req, res) => {
         });
     };
     const updateOps = {};
-    for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
+    try{
+        for (const ops of req.body) {
+            if(ops.propName == "_type" || ops.propName == "_id"){
+                throw new Error("Cant modify property");
+            }
+            updateOps[ops.propName] = ops.value;
+        }
+    }catch(err){
+        res.status(400).json({
+            error: err.message
+        });
     }
     Parcheggio.findByIdAndUpdate(id, updateOps)
     .exec()
     .then(result => {
-        res.status(200).json(result);
+        res.status(200).json({
+            message: " Parcheggio Modified Successfully",
+            modifiedParcheggio:{ 
+                _id: result._id,
+                _type: result._type,
+                request: {
+                    type: "GET",
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + result._id
+                }
+        }});
     })
     .catch( err => {
         console.log(err);
         res.status(500).json({
-            error: err
+            error: err.message
         });
     });
 };
@@ -208,9 +234,14 @@ exports.parcheggio_delete = (req, res) => {
     Parcheggio.findByIdAndDelete(id)
     .exec()
     .then(result => {
-        res.status(200).json(result);
-    })
-    .catch( err => {
+        res.status(200).json({
+            message: " Parcheggio Deleted Successfully",
+            deletedParcheggio:{ 
+                _id: result._id,
+                _type: result._type,
+                nome: result.nome
+        }});
+    }).catch( err => {
         console.log(err);
         res.status(500).json({
             error: err

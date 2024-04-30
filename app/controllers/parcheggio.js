@@ -1,5 +1,3 @@
-const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
 const Parcheggio = require('../models/parcheggio');
 const ParcheggioFree = require('../models/parcheggioFree');
@@ -11,15 +9,29 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 // Utility GET
 exports.parcheggio_get_all = (req, res) => {
     Parcheggio.find({})
+    .select("_id _type nome")
     .exec()
     .then(docs => {
-        console.log(docs);
-        res.status(200).json(docs)
+        const response = {
+            count: docs.length,
+            parcheggi: docs.map(doc =>{
+                return {
+                    id: doc._id,
+                    type: doc._type,
+                    nome: doc.nome,
+                    request: {
+                        type: "GET",
+                        url: "http://localhost:" + process.env.PORT + "/parcheggio:" + doc._id
+                    }
+                }
+            })
+        };
+        res.status(200).json(response);
     })
     .catch( err => {
         console.log(err);
         res.status(500).json({
-            message: err
+            error: err
         })
     });
 };
@@ -28,7 +40,7 @@ exports.parcheggio_get_all = (req, res) => {
 exports.parcheggio_post = (req, res) => {
     let parcheggio;
     try{
-        if(req.body._type != "parcheggioFree" &&  req.body._type != "parcheggioPay" && req.body._type != "parcheggioVigilato"){
+        if(req.body._type != "ParcheggioFree" &&  req.body._type != "ParcheggioPay" && req.body._type != "ParcheggioVigilato"){
             throw new Error("undefined _type field");
         };
         switch(req.body._type){
@@ -113,7 +125,7 @@ exports.parcheggio_post = (req, res) => {
             }
     }}catch(err){
         res.status(400).json({
-            message: err.message
+            error: err.message
     });
     }
     console.log(parcheggio);
@@ -125,7 +137,7 @@ exports.parcheggio_post = (req, res) => {
     }).catch(err =>{
         console.log(err);
         res.status(400).json({
-            message: err
+            error: err
     })});
 };
 
@@ -139,7 +151,7 @@ exports.parcheggio_patch = (req, res) => {
         }
     } catch(err){
         res.status(400).json({
-            message: err.message
+            error: err.message
         });
     };
     const updateOps = {};
@@ -154,7 +166,7 @@ exports.parcheggio_patch = (req, res) => {
     .catch( err => {
         console.log(err);
         res.status(500).json({
-            message: err
+            error: err
         });
     });
 };
@@ -169,7 +181,7 @@ exports.parcheggio_delete = (req, res) => {
         }
     } catch(err){
         res.status(400).json({
-            message: err.message
+            error: err.message
         });
     };
     Parcheggio.findByIdAndDelete(id)
@@ -180,7 +192,7 @@ exports.parcheggio_delete = (req, res) => {
     .catch( err => {
         console.log(err);
         res.status(500).json({
-            message: err
+            error: err
         });
     });
 }

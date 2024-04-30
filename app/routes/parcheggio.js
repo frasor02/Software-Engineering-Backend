@@ -9,7 +9,7 @@ router.get('/', controllerParcheggio.parcheggio_get_all);
 // Chiamata POST per aggiungere un parcheggio
 router.post('/', controllerParcheggio.parcheggio_post);
 
-
+// Chiamata PATCJ che modifica gli attributi di un patcheggio
 router.patch('/:parcheggioId', controllerParcheggio.parcheggio_patch);
 
 // Chiamata DELETE per eliminare un parcheggio

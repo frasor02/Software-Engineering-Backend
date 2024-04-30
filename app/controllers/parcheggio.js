@@ -44,83 +44,104 @@ exports.parcheggio_post = (req, res) => {
             throw new Error("undefined _type field");
         };
         switch(req.body._type){
-            case "parcheggioFree":{
+            case "ParcheggioFree":{
                 if(req.body.isDisco){
                     if(req.body.dataInizio == undefined || req.body.dataFine == undefined){
                         throw new Error("undefined dataInizio o dataFine");
                     }
                     console.log(req.body.dataInizio);
-                    parcheggio = new ParcheggioFree({
-                        _id: new mongoose.Types.ObjectId(),
-                        nome: req.body.nome,
-                        posizione: req.body.posizione,
-                        numPosti: req.body.numPosti,
-                        isCoperto: req.body.isCoperto,
-                        statoParcheggio: req.body.statoParcheggio,
-                        numPostiDisabili: req.body.numPostiDisabili,
-                        numPostiGravidanza: req.body.numPostiGravidanza,
-                        numPostiAuto: req.body.numPostiAuto,
-                        numPostiMoto: req.body.numPostiMoto,
-                        numPostiFurgone : req.body.numPostiFurgone,
-                        numPostiBus : req.body.numPostiBus,
-                        isDisco: req.body.isDisco,
-                        dataInizio: req.body.dataInizio,
-                        dataFine: req.body.dataFine
-                    });
+                    try{
+                        parcheggio = new ParcheggioFree({
+                            _id: new mongoose.Types.ObjectId(),
+                            nome: req.body.nome,
+                            posizione: req.body.posizione,
+                            numPosti: req.body.numPosti,
+                            isCoperto: req.body.isCoperto,
+                            statoParcheggio: req.body.statoParcheggio,
+                            numPostiDisabili: req.body.numPostiDisabili,
+                            numPostiGravidanza: req.body.numPostiGravidanza,
+                            numPostiAuto: req.body.numPostiAuto,
+                            numPostiMoto: req.body.numPostiMoto,
+                            numPostiFurgone : req.body.numPostiFurgone,
+                            numPostiBus : req.body.numPostiBus,
+                            isDisco: req.body.isDisco,
+                            dataInizio: req.body.dataInizio,
+                            dataFine: req.body.dataFine})
+                    }catch(err){                       
+                        res.status(400).json({
+                            error: err
+                        });
+                    };
                 } else{
-                    parcheggio = new ParcheggioFree({
-                        _id: new mongoose.Types.ObjectId(),
-                        nome: req.body.nome,
-                        posizione: req.body.posizione,
-                        numPosti: req.body.numPosti,
-                        isCoperto: req.body.isCoperto,
-                        statoParcheggio: req.body.statoParcheggio,
-                        numPostiDisabili: req.body.numPostiDisabili,
-                        numPostiGravidanza: req.body.numPostiGravidanza,
-                        numPostiAuto: req.body.numPostiAuto,
-                        numPostiMoto: req.body.numPostiMoto,
-                        numPostiFurgone : req.body.numPostiFurgone,
-                        numPostiBus : req.body.numPostiBus,
-                        isDisco: req.body.isDisco,
-                    });
+                    try{
+                        parcheggio = new ParcheggioFree({
+                            _id: new mongoose.Types.ObjectId(),
+                            nome: req.body.nome,
+                            posizione: req.body.posizione,
+                            numPosti: req.body.numPosti,
+                            isCoperto: req.body.isCoperto,
+                            statoParcheggio: req.body.statoParcheggio,
+                            numPostiDisabili: req.body.numPostiDisabili,
+                            numPostiGravidanza: req.body.numPostiGravidanza,
+                            numPostiAuto: req.body.numPostiAuto,
+                            numPostiMoto: req.body.numPostiMoto,
+                            numPostiFurgone : req.body.numPostiFurgone,
+                            numPostiBus : req.body.numPostiBus,
+                            isDisco: req.body.isDisco
+                    })}catch(err){
+                        res.status(400).json({
+                            error: err
+                        })
+                    };;
                 }
                 break;
             }
-            case "parcheggioPay":{
-                parcheggio = new ParcheggioPay({
-                    _id: new mongoose.Types.ObjectId(),
-                    nome: req.body.nome,
-                    posizione: req.body.posizione,
-                    numPosti: req.body.numPosti,
-                    isCoperto: req.body.isCoperto,
-                    statoParcheggio: req.body.statoParcheggio,
-                    numPostiDisabili: req.body.numPostiDisabili,
-                    numPostiGravidanza: req.body.numPostiGravidanza,
-                    numPostiAuto: req.body.numPostiAuto,
-                    numPostiMoto: req.body.numPostiMoto,
-                    numPostiFurgone : req.body.numPostiFurgone,
-                    numPostiBus : req.body.numPostiBus,
-                    tariffa: req.body.tariffa
-                });
+            case "ParcheggioPay":{
+                try{
+                    parcheggio = new ParcheggioPay({
+                        _id: new mongoose.Types.ObjectId(),
+                        nome: req.body.nome,
+                        posizione: req.body.posizione,
+                        numPosti: req.body.numPosti,
+                        isCoperto: req.body.isCoperto,
+                        statoParcheggio: req.body.statoParcheggio,
+                        numPostiDisabili: req.body.numPostiDisabili,
+                        numPostiGravidanza: req.body.numPostiGravidanza,
+                        numPostiAuto: req.body.numPostiAuto,
+                        numPostiMoto: req.body.numPostiMoto,
+                        numPostiFurgone : req.body.numPostiFurgone,
+                        numPostiBus : req.body.numPostiBus,
+                        tariffa: req.body.tariffa
+                })}catch(err){
+                    res.status(400).json({
+                        error: err
+                    })
+                };
                 break;
             }
-            case "parcheggioVigilato":{
-                parcheggio = new ParcheggioVigilato({
-                    _id: new mongoose.Types.ObjectId(),
-                    nome: req.body.nome,
-                    posizione: req.body.posizione,
-                    numPosti: req.body.numPosti,
-                    isCoperto: req.body.isCoperto,
-                    statoParcheggio: req.body.statoParcheggio,
-                    numPostiDisabili: req.body.numPostiDisabili,
-                    numPostiGravidanza: req.body.numPostiGravidanza,
-                    numPostiAuto: req.body.numPostiAuto,
-                    numPostiMoto: req.body.numPostiMoto,
-                    numPostiFurgone : req.body.numPostiFurgone,
-                    numPostiBus : req.body.numPostiBus,
-                    postiOccupati: req.body.postiOccupati,
-                    tariffa: req.body.tariffa
-                });
+            case "ParcheggioVigilato":{
+                try{
+                    parcheggio = new ParcheggioVigilato({
+                        _id: new mongoose.Types.ObjectId(),
+                        nome: req.body.nome,
+                        posizione: req.body.posizione,
+                        numPosti: req.body.numPosti,
+                        isCoperto: req.body.isCoperto,
+                        statoParcheggio: req.body.statoParcheggio,
+                        numPostiDisabili: req.body.numPostiDisabili,
+                        numPostiGravidanza: req.body.numPostiGravidanza,
+                        numPostiAuto: req.body.numPostiAuto,
+                        numPostiMoto: req.body.numPostiMoto,
+                        numPostiFurgone : req.body.numPostiFurgone,
+                        numPostiBus : req.body.numPostiBus,
+                        postiOccupati: req.body.postiOccupati,
+                        tariffa: req.body.tariffa
+                    })
+                }catch(err) {
+                    res.status(400).json({
+                        error: err
+                    })
+                };
                 break;
             }
     }}catch(err){

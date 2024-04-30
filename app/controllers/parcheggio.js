@@ -69,7 +69,7 @@ exports.parcheggio_post = (req, res) => {
                             dataFine: req.body.dataFine})
                     }catch(err){                       
                         res.status(400).json({
-                            error: err
+                            error: err.message
                         });
                     };
                 } else{
@@ -90,7 +90,7 @@ exports.parcheggio_post = (req, res) => {
                             isDisco: req.body.isDisco
                     })}catch(err){
                         res.status(400).json({
-                            error: err
+                            error: err.message
                         })
                     };;
                 }
@@ -114,7 +114,7 @@ exports.parcheggio_post = (req, res) => {
                         tariffa: req.body.tariffa
                 })}catch(err){
                     res.status(400).json({
-                        error: err
+                        error: err.message
                     })
                 };
                 break;
@@ -139,7 +139,7 @@ exports.parcheggio_post = (req, res) => {
                     })
                 }catch(err) {
                     res.status(400).json({
-                        error: err
+                        error: err.message
                     })
                 };
                 break;
@@ -165,7 +165,7 @@ exports.parcheggio_post = (req, res) => {
             })}
     ).catch(err =>{
         console.log(err);
-        res.status(400).json({
+        res.status(500).json({
             error: err.message
     })});
 };
@@ -211,12 +211,11 @@ exports.parcheggio_patch = (req, res) => {
         }});
     })
     .catch( err => {
-        console.log(err);
-        res.status(500).json({
-            error: err.message
-        });
+            res.status(500).json({
+                error: err.message
+            });
     });
-};
+}
 
 //Funzione che implementa la chiamata DELETE a /parcheggio/:parcheggioId
 exports.parcheggio_delete = (req, res) => {

@@ -1,0 +1,535 @@
+openapi: 3.0.3
+info:
+  title: Ricerca Parcheggio Efficace - OpenAPI 3.0
+  description:
+    Questa API consente di interagire con il servizio Ricerca Parcheggio Efficace per sfruttare le sue funzionalità.
+  version: 0.0.1
+paths:
+  /parcheggi:
+    post:
+      summary: Aggiunta parcheggio
+      description: Viene aggiunto un nuovo parcheggio con i campi inviati
+      tags: 
+        - parcheggi
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - oneOf:
+                  - $ref: '#/components/schemas/ParcheggioFreeDiscoPostReqSchema'
+                  - $ref: '#/components/schemas/ParcheggioFreePostReqSchema' 
+                  discriminator:
+                    propertyName: isDisco
+                - $ref: '#/components/schemas/ParcheggioPayReqSchema'
+                - $ref: '#/components/schemas/ParcheggioVigilatoReqSchema'
+              discriminator:
+                propertyName: _type
+            examples:
+                free:
+                  summary: esempio parcheggio gratuito senza disco orario
+                  value: {
+                          "_type": "ParcheggioFree",
+                          "nome": "p1",
+                          "posizione":{
+                            "type": "Point",
+                            "coordinates": [11, 14]
+                          },
+                          "numPosti": 23,
+                          "isCoperto": true,
+                          "statoParcheggio": "Non disponibile",
+                          "numPostiDisabili": 2,
+                          "numPostiGravidanza": 0,
+                          "numPostiAuto": 15,
+                          "numPostiMoto": 6,
+                          "numPostiFurgone": 0,
+                          "numPostiBus": 0,
+                          "isDisco": false
+                        }
+                freeDisco:
+                  summary: esempio parcheggio gratuito con disco orario
+                  value: {
+                          "_type": "ParcheggioFree",
+                          "nome": "p2",
+                          "posizione": {
+                            "type": "Point",
+                            "coordinates": [9, 4]
+                          },
+                          "numPosti": 23,
+                          "isCoperto": false,
+                          "statoParcheggio": "Non disponibile",
+                          "numPostiDisabili": 2,
+                          "numPostiGravidanza": 0,
+                          "numPostiAuto": 15,
+                          "numPostiMoto": 6,
+                          "numPostiFurgone": 0,
+                          "numPostiBus": 0,
+                          "isDisco": true,
+                          "dataInizio": "13:35",
+                          "dataFine": "16:35"
+                        }
+                pay:
+                  summary: esempio parcheggio a pagamento
+                  value: {
+                          "_type": "ParcheggioPay",
+                          "nome": "p3",
+                          "posizione":{
+                            "type": "Point",
+                            "coordinates": [24, 1]
+                          },
+                          "numPosti": 23,
+                          "isCoperto": false,
+                          "statoParcheggio": "Non disponibile",
+                          "numPostiDisabili": 2,
+                          "numPostiGravidanza": 1,
+                          "numPostiAuto": 13,
+                          "numPostiMoto": 6,
+                          "numPostiFurgone": 1,
+                          "numPostiBus": 0,
+                          "tariffa": 1.20
+                        }
+                vigilato:
+                  summary: esempio parcheggio vigilato
+                  value: {
+                        "_type": "ParcheggioVigilato",
+                        "nome": "p4",
+                        "posizione":{
+                          "type": "Point",
+                          "coordinates": [0, 0]
+                        },
+                        "numPosti": 30,
+                        "isCoperto": true,
+                        "statoParcheggio": "Non disponibile",
+                        "numPostiDisabili": 2,
+                        "numPostiGravidanza": 0,
+                        "numPostiAuto": 15,
+                        "numPostiMoto": 6,
+                        "numPostiFurgone": 0,
+                        "numPostiBus": 7,
+                        "postiOccupati": {
+                          "postiOcc": 10,
+                          "postiOccDisabili": 1,
+                          "postiOccGravidanza": 0,
+                          "postiOccAuto": 6,
+                          "postiOccMoto": 2,
+                          "postiOccFurgone": 0,
+                          "postiOccBus": 1
+                        },
+                        "tariffa": 2.50
+                      }
+      responses:
+        '201':
+          $ref: "#/components/responses/PostSuccessfulRes"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+    get:
+      summary: Richiesta lista parcheggi
+      description: Ritorna la lista di tutti i parcheggi
+      tags: 
+        - parcheggi
+      responses:
+        '200':
+          $ref: '#/components/responses/GetAllRes'
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+  /parcheggi/{parcheggioId}:
+    get:
+      description: Ritorna un parcheggio dato un ID
+      tags: 
+        - parcheggi
+      #operationId: getParcheggioById
+      parameters:
+        - $ref: "#/components/parameters/parcheggioId" 
+      responses:
+        '200': #risposta sbagliata, altro sprint
+          description: "OK"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+    patch:
+      summary: Modifica parcheggio
+      description: Modifica un parcheggio dato un ID
+      tags: 
+        - parcheggi
+      parameters:
+        - $ref: "#/components/parameters/parcheggioId" 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref : "#/components/schemas/ParcheggioPatchReqSchema"
+      responses:
+        '200':
+          $ref: '#/components/responses/PatchSuccessfulRes'
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+    delete:
+      summary: Cancellazione parcheggio
+      description: Cancella un parcheggio dato un ID
+      tags: 
+        - parcheggi
+      parameters:
+        - $ref: "#/components/parameters/parcheggioId" 
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccessfulRes'
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+components:
+  parameters:
+    parcheggioId:
+        name: parcheggioId
+        in: path
+        description: ID del parcheggio
+        required: true
+        schema:
+          type: string 
+  schemas:
+    ParcheggioSchema:
+      type: object
+      required:
+        - _type
+        - nome
+        - posizione
+        - numPosti
+        - isCoperto
+        - statoParcheggio
+        - numPostiDisabili
+        - numPostiGravidanza
+        - numPostiAuto
+        - numPostiMoto
+        - numPostiFurgone
+        - numPostiBus
+      properties:
+        _type:
+          type: string
+        nome:
+          type: string
+        posizione:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - Point
+            coordinates:
+              type: array
+              minItems: 2
+              maxItems: 2
+              items:
+                type: number
+        numPosti:  
+          type: integer
+        isCoperto:
+          type: boolean
+        statoParcheggio:
+          type: string
+          enum:
+          - Disponibile
+          - Non disponibile
+        numPostiDisabili: 
+          type: integer
+        numPostiGravidanza:
+          type: integer
+        numPostiAuto:
+          type: integer
+        numPostiMoto: 
+          type: integer
+        numPostiFurgone:
+          type: integer
+        numPostiBus:
+          type: integer
+    ParcheggioFreeDiscoPostReqSchema:
+      allOf:
+        - $ref: '#/components/schemas/ParcheggioSchema'
+        - type: object
+          required:
+            - isDisco
+            - dataInizio
+            - dataFine
+          properties:
+            isDisco:
+              type: boolean
+              enum:
+              - true
+            dataInizio:
+              type: string
+            dataFine:
+              type: string
+    ParcheggioFreePostReqSchema:
+      allOf:
+        - $ref: '#/components/schemas/ParcheggioSchema'
+        - type: object
+          required:
+            - isDisco
+          properties:
+            isDisco:
+              type: boolean
+              enum:
+              - false
+    ParcheggioPayReqSchema:
+      allOf:
+        - $ref: '#/components/schemas/ParcheggioSchema'
+        - type: object
+          required:
+            - tariffa
+          properties:
+            tariffa:
+              type: number
+    ParcheggioVigilatoReqSchema:
+      allOf:
+        - $ref: '#/components/schemas/ParcheggioSchema'
+        - type: object
+          required:
+            - postiOccupati
+            - tariffa
+          properties:
+            postiOccupati:
+              type: object
+              required:
+                - postiOcc
+                - postiOccDisabili
+                - postiOccGravidanza
+                - postiOccAuto
+                - postiOccMoto
+                - postiOccFurgone
+                - postiOccBus
+              properties:
+                postiOcc:
+                  type: integer
+                postiOccDisabili:
+                  type: integer
+                postiOccGravidanza:
+                  type: integer
+                postiOccAuto:
+                  type: integer
+                postiOccMoto:
+                  type: integer
+                postiOccFurgone:
+                  type: integer
+                postiOccBus:
+                  type: integer
+            tariffa:
+              type: number
+    ParcheggioPatchReqSchema:
+      type: object
+      properties:
+        propName:
+          type: string
+          enum:
+          - nome
+          - posizione
+          - numPosti
+          - isCoperto
+          - statoParcheggio
+          - numPostiDisabili
+          - numPostiGravidanza
+          - numPostiAuto
+          - numPostiMoto
+          - numPostiFurgone
+          - numPostiBus
+          - isDisco
+          - dataInizio
+          - dataFine
+          - tariffa
+          - postiOccupati
+        value:
+          oneOf:
+            - type: string
+            - type: integer
+            - type: number
+            - type: boolean
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - Point
+                coordinates:
+                  type: array
+                  minItems: 2
+                  maxItems: 2
+                  items:
+                    type: number
+            - type: string
+              enum:
+              - Disponibile
+              - Non disponibile
+    ParcheggioPatchResSchema:
+      type: object
+      required:
+        - message
+        - modifiedParcheggio
+      properties:
+        message:
+          type: string
+        modifiedParcheggio:
+          type: object
+          required:
+            - _id
+            - _type
+            - request
+          properties:
+            _id:
+              type: string
+            _type:
+              type: string
+            request:
+              type: object
+              required:
+                - type
+                - url
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - GET
+                url:
+                  type: string
+    ParcheggioPostResSchema:
+      type: object
+      required:
+        - message
+        - createdParcheggio
+      properties:
+        message:
+          type: string
+        createdParcheggio:
+          type: object
+          required:
+            - _id
+            - _type
+            - nome
+            - request
+          properties:
+            _id:
+              type: string
+            _type:
+              type: string
+            nome:
+              type: string
+            request:
+              type: object
+              required:
+                - type
+                - url
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - GET
+                url:
+                  type: string
+    ParcheggioDeleteResSchema:
+      type: object
+      required:
+        - message
+        - deletedParcheggio
+      properties:
+        message:
+          type: string
+        deletedParcheggio:
+          type: object
+          required:
+            - _id
+            - _type
+            - nome
+            - request
+          properties:
+            _id:
+              type: string
+            _type:
+              type: string
+            nome:
+              type: string
+            request:
+              type: object
+              required:
+                - type
+                - url
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - GET
+                url:
+                  type: string
+    GetAllParcheggiResSchema:
+      type: object
+      required: 
+       - count
+       - parcheggi
+      properties:
+        count:
+          type: integer
+        parcheggi:
+          type: array
+          items:
+            type: object
+            required:
+              - _id
+              - _type
+              - nome
+              - request
+            properties:
+              _id:
+                type: string
+              _type:
+                type: string
+              nome:
+                type: string
+              request:
+                type: object
+                required:
+                  - type
+                  - url
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - GET
+                  url:
+                    type: string
+    GeneralErrorSchema:
+      type: object
+      properties:
+        error:
+          type: string
+  responses:
+    GeneralError:
+      description: "Errore generico per cui viene mostrato un messaggio di errore"
+      content: 
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GeneralErrorSchema"
+          example: 
+            error: "Error"
+    PostSuccessfulRes:
+      description: "Risposta alla POST in caso di successo"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ParcheggioPostResSchema' 
+    DeleteSuccessfulRes:
+      description: "Risposta alla DELETE in caso di successo"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ParcheggioDeleteResSchema' 
+    PatchSuccessfulRes:
+      description: "Risposta alla PATCH in caso di successo"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ParcheggioPatchResSchema'
+    GetAllRes:
+      description: Risposta in caso di successo
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetAllParcheggiResSchema'

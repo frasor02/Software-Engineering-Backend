@@ -2,7 +2,7 @@ require('dotenv').config()
 const app = require('./app/app.js');
 const mongoose = require('mongoose');
 
-//
+// Il port su cui il server è in ascolto è specificato nelle variabili d'ambiente oppure di default 3000
 const port = process.env.PORT || 3000;
 
 // Configura mongoose per connettersi al server

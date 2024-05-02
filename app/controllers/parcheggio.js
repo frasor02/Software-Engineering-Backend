@@ -6,6 +6,13 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
+//Funzione che implementa la chiamata GET a /parcheggio/:parcheggioId
+exports.parcheggio_get = (req, res) => {
+    res.status(200).json({
+        message: "ok"
+    });
+}
+
 // Funzione che implementa la chiamata GET a /parcheggio
 exports.parcheggio_get_all = (req, res) => {
     Parcheggio.find({})
@@ -247,3 +254,4 @@ exports.parcheggio_delete = (req, res) => {
         });
     });
 }
+

@@ -8,9 +8,33 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 //Funzione che implementa la chiamata GET a /parcheggio/:parcheggioId
 exports.parcheggio_get = (req, res) => {
-    res.status(200).json({
-        message: "ok"
-    });
+    let id;
+    try {
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            throw new Error("Wrong id")
+        }
+    } catch(err){
+        res.status(400).json({
+            error: err.message
+        });
+    };
+    Parcheggio.findById(id).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
+    .then(
+        doc => {
+            res.status(200).json({
+                "res": doc
+            })
+        }
+
+    ) .catch(
+        err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            })
+        }
+    )
 }
 
 // Funzione che implementa la chiamata GET a /parcheggio

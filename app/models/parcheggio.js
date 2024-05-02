@@ -17,4 +17,5 @@ const parcheggioSchema = mongoose.Schema({
     numPostiBus : { type: Number, required: true, min: 0, get: v => Math.round(v),set: v => Math.round(v)}
 }, { discriminatorKey : '_type' });
 
+parcheggioSchema.index({ posizione: "2dsphere" });
 module.exports = mongoose.model('Parcheggio', parcheggioSchema);

@@ -5,10 +5,11 @@ info:
     Questa API consente di interagire con il servizio Ricerca Parcheggio Efficace per sfruttare le sue funzionalità.
   version: 0.0.1
 paths:
-  /parcheggi:
+  /v1/parcheggio:
     post:
       summary: Aggiunta parcheggio
       description: Viene aggiunto un nuovo parcheggio con i campi inviati
+      operationId: postParcheggio
       tags: 
         - parcheggi
       requestBody:
@@ -125,26 +126,28 @@ paths:
     get:
       summary: Richiesta lista parcheggi
       description: Ritorna la lista di tutti i parcheggi
+      operationId: getAllParcheggi
       tags: 
         - parcheggi
       responses:
         '200':
-          $ref: '#/components/responses/GetAllRes'
+          $ref: '#/components/responses/GetAllSuccessfulRes'
         '4XX': 
           $ref: "#/components/responses/GeneralError"
         '5XX': 
           $ref: "#/components/responses/GeneralError"
-  /parcheggi/{parcheggioId}:
+  /v1/parcheggio/:{parcheggioId}:
     get:
+      summary: Ricezione info parcheggio specifico
       description: Ritorna un parcheggio dato un ID
+      operationId: getParcheggioById
       tags: 
         - parcheggi
-      #operationId: getParcheggioById
       parameters:
         - $ref: "#/components/parameters/parcheggioId" 
       responses:
-        '200': #risposta sbagliata, altro sprint
-          description: "OK"
+        '200': 
+          $ref: '#/components/responses/GetParcheggioSuccessfulRes'
         '4XX': 
           $ref: "#/components/responses/GeneralError"
         '5XX': 
@@ -152,6 +155,7 @@ paths:
     patch:
       summary: Modifica parcheggio
       description: Modifica un parcheggio dato un ID
+      operationId: modifyParcheggioById
       tags: 
         - parcheggi
       parameters:
@@ -171,6 +175,7 @@ paths:
     delete:
       summary: Cancellazione parcheggio
       description: Cancella un parcheggio dato un ID
+      operationId: deleteParcheggioById
       tags: 
         - parcheggi
       parameters:
@@ -179,6 +184,59 @@ paths:
         '200':
           $ref: '#/components/responses/DeleteSuccessfulRes'
         '4XX': 
+          $ref: "#/components/responses/GeneralError"
+  /v1/parcheggio/ricerca:
+    get:
+      summary: Ricerca dei parcheggi vicini alla meta
+      description: Ricerca dei parcheggi vicini alla meta selezionata
+      operationId: ricercaParcheggiVicini
+      tags: 
+        - ricerca
+      parameters: 
+        - name: lon
+          in: query
+          description: Longitudine selezionata
+          required: true
+          schema:
+            type: number
+        - name: lat
+          in: query
+          description: Latitudine selezionata
+          required: true
+          schema:
+            type: number
+        - name: isCoperto
+          in: query
+          description: Indica la preferenza tra parcheggio coperto o meno
+          required: false
+          schema:
+            type: boolean # o number?
+        - name: utente
+          in: query
+          description: Indica la preferenza sulla presenza di posti per disabili o posti per donne in gravidanza
+          required: false
+          schema:
+            type: string
+            enum: 
+              - disabili
+              - gravidanza
+        - name: veicolo
+          in: query
+          description: Indica la preferenza sulla presenza di posti per per auto, moto, furgoni o bus
+          required: false
+          schema:
+            type: string
+            enum: 
+              - auto
+              - moto
+              - furgoni
+              - bus
+      responses:
+        '200':
+          $ref: '#/components/responses/RicercaParcheggiViciniSuccessfulRes'
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
           $ref: "#/components/responses/GeneralError"
 components:
   parameters:
@@ -244,6 +302,74 @@ components:
           type: integer
         numPostiBus:
           type: integer
+    ParcheggioFreeSchema:
+      allOf:
+      - $ref: '#/components/schemas/ParcheggioSchema'
+      - type: object
+        required:
+          - _id
+          - isDisco
+          - dataInizio
+          - dataFine
+        properties:
+          _id:
+            type: string
+          isDisco:
+            type: boolean
+          dataInizio:
+            type: string
+          dataFine:
+            type: string
+    ParcheggioPaySchema:
+      allOf:
+        - $ref: '#/components/schemas/ParcheggioSchema'
+        - type: object
+          required:
+            - _id
+            - tariffa
+          properties:
+            _id:
+              type: string
+            tariffa:
+              type: number
+    ParcheggioVigilatoSchema:
+      allOf:
+        - $ref: '#/components/schemas/ParcheggioSchema'
+        - type: object
+          required:
+            - _id
+            - tariffa
+            - postiOccupati
+          properties:
+            _id:
+              type: string
+            tariffa:
+              type: number
+            postiOccupati:
+              type: object
+              required:
+                - postiOcc
+                - postiOccDisabili
+                - postiOccGravidanza
+                - postiOccAuto
+                - postiOccMoto
+                - postiOccFurgone
+                - postiOccBus
+              properties:
+                postiOcc:
+                  type: integer
+                postiOccDisabili:
+                  type: integer
+                postiOccGravidanza:
+                  type: integer
+                postiOccAuto:
+                  type: integer
+                postiOccMoto:
+                  type: integer
+                postiOccFurgone:
+                  type: integer
+                postiOccBus:
+                  type: integer
     ParcheggioFreeDiscoPostReqSchema:
       allOf:
         - $ref: '#/components/schemas/ParcheggioSchema'
@@ -360,6 +486,32 @@ components:
               enum:
               - Disponibile
               - Non disponibile
+    ParcheggioShortResSchema: #??????
+      type: object
+      required:
+        - _id
+        - _type
+        - nome
+        - request
+      properties:
+        _id:
+          type: string
+        _type:
+          type: string
+        nome:
+          type: string
+        request:
+          type: object
+          required:
+            - type
+            - url
+          properties:
+            type:
+              type: string
+              enum:
+              - GET #Va bene o serve anche altro?
+            url:
+              type: string
     ParcheggioPatchResSchema:
       type: object
       required:
@@ -400,31 +552,7 @@ components:
         message:
           type: string
         createdParcheggio:
-          type: object
-          required:
-            - _id
-            - _type
-            - nome
-            - request
-          properties:
-            _id:
-              type: string
-            _type:
-              type: string
-            nome:
-              type: string
-            request:
-              type: object
-              required:
-                - type
-                - url
-              properties:
-                type:
-                  type: string
-                  enum:
-                  - GET
-                url:
-                  type: string
+          $ref: '#/components/schemas/ParcheggioShortResSchema'
     ParcheggioDeleteResSchema:
       type: object
       required:
@@ -434,32 +562,8 @@ components:
         message:
           type: string
         deletedParcheggio:
-          type: object
-          required:
-            - _id
-            - _type
-            - nome
-            - request
-          properties:
-            _id:
-              type: string
-            _type:
-              type: string
-            nome:
-              type: string
-            request:
-              type: object
-              required:
-                - type
-                - url
-              properties:
-                type:
-                  type: string
-                  enum:
-                  - GET
-                url:
-                  type: string
-    GetAllParcheggiResSchema:
+          $ref: '#/components/schemas/ParcheggioShortResSchema'
+    GetParcheggiResSchema:
       type: object
       required: 
        - count
@@ -470,31 +574,14 @@ components:
         parcheggi:
           type: array
           items:
-            type: object
-            required:
-              - _id
-              - _type
-              - nome
-              - request
-            properties:
-              _id:
-                type: string
-              _type:
-                type: string
-              nome:
-                type: string
-              request:
-                type: object
-                required:
-                  - type
-                  - url
-                properties:
-                  type:
-                    type: string
-                    enum:
-                    - GET
-                  url:
-                    type: string
+            $ref: '#/components/schemas/ParcheggioShortResSchema'
+    GetParcheggioResSchema:
+      oneOf:
+        - $ref: '#/components/schemas/ParcheggioFreeSchema'
+        - $ref: '#/components/schemas/ParcheggioPaySchema'
+        - $ref: '#/components/schemas/ParcheggioVigilatoSchema'
+      discriminator:
+        propertyName: _type
     GeneralErrorSchema:
       type: object
       properties:
@@ -515,21 +602,54 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ParcheggioPostResSchema' 
+      links:
+        GetParcheggioById: 
+          $ref: '#/components/links/GetParcheggioById'
     DeleteSuccessfulRes:
-      description: "Risposta alla DELETE in caso di successo"
+      description: Risposta alla DELETE in caso di successo
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ParcheggioDeleteResSchema' 
     PatchSuccessfulRes:
-      description: "Risposta alla PATCH in caso di successo"
+      description: Risposta alla PATCH in caso di successo
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ParcheggioPatchResSchema'
-    GetAllRes:
+      links:
+        GetParcheggioById: 
+          $ref: '#/components/links/GetParcheggioById'
+    GetAllSuccessfulRes:
       description: Risposta in caso di successo
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GetAllParcheggiResSchema'
+            $ref: '#/components/schemas/GetParcheggiResSchema'
+      links:
+        GetParcheggioById: 
+          $ref: '#/components/links/GetParcheggioById'
+    GetParcheggioSuccessfulRes:
+      description: Risponde con le informazioni del parcheggio cercato in caso di successo
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetParcheggioResSchema'
+      links:
+        GetParcheggioById:
+          $ref: '#/components/links/GetParcheggioById'
+    RicercaParcheggiViciniSuccessfulRes:
+      description: Risponde con una lista dei parcheggi ordinati dal più vicino al più lontano in caso di successo
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetParcheggiResSchema'
+      links:
+        GetParcheggioById: 
+          $ref: '#/components/links/GetParcheggioById'
+  links:
+    GetParcheggioById:
+      operationId: getParcheggioById
+      parameters:
+        parcheggioId: 'response.body#/_id'
+      description: Il valore '_id' ritornato può essere usato come 'parcheggioId' in 'GET /parcheggi/{parcheggioId}'

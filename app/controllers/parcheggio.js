@@ -6,6 +6,7 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
+// funzione utility per la ricerca
 function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto, furgone, bus){
     Parcheggio.find(
         {
@@ -27,7 +28,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
             }
         }
         
-    )
+    ).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
     .then(
        docs => {
             console.log(docs);
@@ -49,7 +50,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
 
 }
 
-//
+//funzione che implementa la chiamata get /parcheggio/ricerca
 exports.parcheggio_ricerca = (req, res) => {
     let lat = parseFloat(req.query.lat);
     let long = parseFloat(req.query.long);

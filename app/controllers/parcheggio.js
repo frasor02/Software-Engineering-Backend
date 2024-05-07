@@ -6,85 +6,17 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
-//
-exports.parcheggio_ricerca = (req, res) => {
-    let lat = parseFloat(req.query.lat);
-    let long = parseFloat(req.query.long);
-    let isCoperto = req.query.isCoperto;
-    let utente = req.query.utente;
-    let veicolo = req.query.veicolo;
-    console.log(lat, long);
-    console.log(isCoperto);
-    console.log(utente);
-    console.log(veicolo);
-    
-    switch (utente) { 
-        case "disabile": {
-            switch (veicolo) {   
-                case "Auto":
-                    // codice per auto
-                    break;
-                case "Moto":
-                    // codice per moto
-                    break;
-                case "Furgone":
-                    // codice per furgone
-                    break;
-                case "Bus":
-                    // codice per bus
-                    break;
-                default:
-                    // codice per default
-                    break;
-            }
-            break;
-        }
-        case "gravidanza": {
-            switch (veicolo) {   
-                case "Auto":
-                    // codice per auto
-                    break;
-                case "Moto":
-                    // codice per moto
-                    break;
-                case "Furgone":
-                    // codice per furgone
-                    break;
-                case "Bus":
-                    // codice per bus
-                    break;
-                default:
-                    // codice per default
-                    break;
-            }
-            break;
-        }
-        default: {
-            switch (veicolo) {   
-                case "Auto":
-                    // codice per auto
-                    break;
-                case "Moto":
-                    // codice per moto
-                    break;
-                case "Furgone":
-                    // codice per furgone
-                    break;
-                case "Bus":
-                    // codice per bus
-                    break;
-                default:
-                    // codice per default
-                    break;
-            }
-            break;
-        }
-    }
-    
-     
+function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto, furgone, bus){
     Parcheggio.find(
         {
             isCoperto: isCoperto,
+            numPostiDisabili: { $gt: disabili},
+            numPostiGravidanza: { $gt: gravidanza},
+            numPostiAuto: { $gt: auto},
+            numPostiMoto: { $gt: moto},
+            numPostiFurgone: { $gt: furgone},
+            numPostiBus: { $gt: bus},
+            
             posizione:
             {
                 $near: 
@@ -113,7 +45,84 @@ exports.parcheggio_ricerca = (req, res) => {
             })
         }
     )
+
+
+}
+
+//
+exports.parcheggio_ricerca = (req, res) => {
+    let lat = parseFloat(req.query.lat);
+    let long = parseFloat(req.query.long);
+    let isCoperto = req.query.isCoperto;
+    let utente = req.query.utente;
+    let veicolo = req.query.veicolo;
+    console.log(lat, long);
+    console.log(isCoperto);
+    console.log(utente);
+    console.log(veicolo);
     
+    switch (utente) { 
+        case "disabile": {
+            switch (veicolo) {   
+                case "auto":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, 0, -1, -1, -1);
+                    break;
+                case "moto":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, 0, -1, -1);
+                    break;
+                case "furgone":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, -1, 0, -1);
+                    break;
+                case "bus":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, -1, -1, 0);
+                    break;
+                default:
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, -1, -1, -1);
+                    break;
+            }
+            break;
+        }
+        case "gravidanza": {
+            switch (veicolo) {   
+                case "auto":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, 0, -1, -1, -1);
+                    break;
+                case "moto":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, 0, -1, -1);
+                    break;
+                case "furgone":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, -1, 0, -1);
+                    break;
+                case "bus":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, -1, -1, 0);
+                    break;
+                default:
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, -1, -1, -1);
+                    break;
+            }
+            break;
+        }
+        default: {
+            switch (veicolo) {   
+                case "auto":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, 0, -1, -1, -1);
+                    break;
+                case "moto":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, 0, -1, -1);
+                    break;
+                case "furgone":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, -1, 0, -1);
+                    break;
+                case "bus":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, -1, -1, 0);
+                    break;
+                default:
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, -1, -1, -1);
+                    break;
+            }
+            break;
+        }
+    }
         
       
 }

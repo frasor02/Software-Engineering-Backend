@@ -10,6 +10,7 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto, furgone, bus){
     Parcheggio.find(
         {
+            statoParcheggio: "Disponibile",
             isCoperto: isCoperto,
             numPostiDisabili: { $gt: disabili},
             numPostiGravidanza: { $gt: gravidanza},
@@ -30,14 +31,23 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
         
     ).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
     .then(
-       docs => {
-            console.log(docs);
-            res.status(200).json(
-                {
-                    "parcheggi": docs
-                }
-            );
-        } 
+        docs => {
+            const response = {
+                count: docs.length,
+                parcheggi: docs.map(doc =>{
+                    return {
+                        _id: doc._id,
+                        _type: doc._type,
+                        nome: doc.nome,
+                        request: {
+                            type: "GET",
+                            url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
+                        }
+                    }
+                })
+            }
+                res.status(200).json(response);
+            } 
     ) .catch(
         err => {
             console.log(err);

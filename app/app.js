@@ -17,7 +17,7 @@ app.use((req,res,next) => {
 app.use(cors())
 
 // Routes per raggiungere risorse
-app.use('/parcheggio', parcheggioRoutes);
+app.use('/v1/parcheggio', parcheggioRoutes);
 
 // Handler errore 404 NOT FOUND di default
 app.use((req, res) => {

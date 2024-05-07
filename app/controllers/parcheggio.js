@@ -6,6 +6,118 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
+//
+exports.parcheggio_ricerca = (req, res) => {
+    let lat = parseFloat(req.query.lat);
+    let long = parseFloat(req.query.long);
+    let isCoperto = req.query.isCoperto;
+    let utente = req.query.utente;
+    let veicolo = req.query.veicolo;
+    console.log(lat, long);
+    console.log(isCoperto);
+    console.log(utente);
+    console.log(veicolo);
+    
+    switch (utente) { 
+        case "disabile": {
+            switch (veicolo) {   
+                case "Auto":
+                    // codice per auto
+                    break;
+                case "Moto":
+                    // codice per moto
+                    break;
+                case "Furgone":
+                    // codice per furgone
+                    break;
+                case "Bus":
+                    // codice per bus
+                    break;
+                default:
+                    // codice per default
+                    break;
+            }
+            break;
+        }
+        case "gravidanza": {
+            switch (veicolo) {   
+                case "Auto":
+                    // codice per auto
+                    break;
+                case "Moto":
+                    // codice per moto
+                    break;
+                case "Furgone":
+                    // codice per furgone
+                    break;
+                case "Bus":
+                    // codice per bus
+                    break;
+                default:
+                    // codice per default
+                    break;
+            }
+            break;
+        }
+        default: {
+            switch (veicolo) {   
+                case "Auto":
+                    // codice per auto
+                    break;
+                case "Moto":
+                    // codice per moto
+                    break;
+                case "Furgone":
+                    // codice per furgone
+                    break;
+                case "Bus":
+                    // codice per bus
+                    break;
+                default:
+                    // codice per default
+                    break;
+            }
+            break;
+        }
+    }
+    
+     
+    Parcheggio.find(
+        {
+            isCoperto: isCoperto,
+            posizione:
+            {
+                $near: 
+                {
+                    $geometry: { type: "Point",  coordinates: [ long, lat ] }
+
+                }
+            }
+        }
+        
+    )
+    .then(
+       docs => {
+            console.log(docs);
+            res.status(200).json(
+                {
+                    "parcheggi": docs
+                }
+            );
+        } 
+    ) .catch(
+        err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            })
+        }
+    )
+    
+        
+      
+}
+
 //Funzione che implementa la chiamata GET a /parcheggio/:parcheggioId
 exports.parcheggio_get = (req, res) => {
     let id;
@@ -52,7 +164,7 @@ exports.parcheggio_get_all = (req, res) => {
                     nome: doc.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + doc._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
                     }
                 }
             })
@@ -190,7 +302,7 @@ exports.parcheggio_post = (req, res) => {
                     nome: result.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + result._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
                     }
                 }
             })}
@@ -237,7 +349,7 @@ exports.parcheggio_patch = (req, res) => {
                 _type: result._type,
                 request: {
                     type: "GET",
-                    url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + result._id
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
                 }
         }});
     })

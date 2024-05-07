@@ -6,6 +6,169 @@ const ParcheggioVigilato = require('../models/parcheggioVigilato');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
+// funzione utility per la ricerca
+function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto, furgone, bus){
+    Parcheggio.find(
+        {
+            statoParcheggio: "Disponibile",
+            isCoperto: isCoperto,
+            numPostiDisabili: { $gt: disabili},
+            numPostiGravidanza: { $gt: gravidanza},
+            numPostiAuto: { $gt: auto},
+            numPostiMoto: { $gt: moto},
+            numPostiFurgone: { $gt: furgone},
+            numPostiBus: { $gt: bus},
+            
+            posizione:
+            {
+                $near: 
+                {
+                    $geometry: { type: "Point",  coordinates: [ long, lat ] }
+
+                }
+            }
+        }
+        
+    ).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
+    .then(
+        docs => {
+            const response = {
+                count: docs.length,
+                parcheggi: docs.map(doc =>{
+                    return {
+                        _id: doc._id,
+                        _type: doc._type,
+                        nome: doc.nome,
+                        request: {
+                            type: "GET",
+                            url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
+                        }
+                    }
+                })
+            }
+                res.status(200).json(response);
+            } 
+    ) .catch(
+        err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            })
+        }
+    )
+
+
+}
+
+//funzione che implementa la chiamata get /parcheggio/ricerca
+exports.parcheggio_ricerca = (req, res) => {
+    let lat = parseFloat(req.query.lat);
+    let long = parseFloat(req.query.long);
+    let isCoperto = req.query.isCoperto;
+    let utente = req.query.utente;
+    let veicolo = req.query.veicolo;
+    console.log(lat, long);
+    console.log(isCoperto);
+    console.log(utente);
+    console.log(veicolo);
+    
+    switch (utente) { 
+        case "disabile": {
+            switch (veicolo) {   
+                case "auto":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, 0, -1, -1, -1);
+                    break;
+                case "moto":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, 0, -1, -1);
+                    break;
+                case "furgone":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, -1, 0, -1);
+                    break;
+                case "bus":
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, -1, -1, 0);
+                    break;
+                default:
+                    findRicerca(res, long, lat, isCoperto, 0, -1, -1, -1, -1, -1);
+                    break;
+            }
+            break;
+        }
+        case "gravidanza": {
+            switch (veicolo) {   
+                case "auto":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, 0, -1, -1, -1);
+                    break;
+                case "moto":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, 0, -1, -1);
+                    break;
+                case "furgone":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, -1, 0, -1);
+                    break;
+                case "bus":
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, -1, -1, 0);
+                    break;
+                default:
+                    findRicerca(res, long, lat, isCoperto, -1, 0, -1, -1, -1, -1);
+                    break;
+            }
+            break;
+        }
+        default: {
+            switch (veicolo) {   
+                case "auto":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, 0, -1, -1, -1);
+                    break;
+                case "moto":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, 0, -1, -1);
+                    break;
+                case "furgone":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, -1, 0, -1);
+                    break;
+                case "bus":
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, -1, -1, 0);
+                    break;
+                default:
+                    findRicerca(res, long, lat, isCoperto, -1, -1, -1, -1, -1, -1);
+                    break;
+            }
+            break;
+        }
+    }
+        
+      
+}
+
+//Funzione che implementa la chiamata GET a /parcheggio/:parcheggioId
+exports.parcheggio_get = (req, res) => {
+    let id;
+    try {
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            throw new Error("Wrong id")
+        }
+    } catch(err){
+        res.status(400).json({
+            error: err.message
+        });
+    };
+    Parcheggio.findById(id).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
+    .then(
+        doc => {
+            res.status(200).json({
+                "res": doc
+            })
+        }
+
+    ) .catch(
+        err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            })
+        }
+    )
+}
+
 // Funzione che implementa la chiamata GET a /parcheggio
 exports.parcheggio_get_all = (req, res) => {
     Parcheggio.find({})
@@ -21,7 +184,7 @@ exports.parcheggio_get_all = (req, res) => {
                     nome: doc.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + doc._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
                     }
                 }
             })
@@ -159,7 +322,7 @@ exports.parcheggio_post = (req, res) => {
                     nome: result.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + result._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
                     }
                 }
             })}
@@ -206,7 +369,7 @@ exports.parcheggio_patch = (req, res) => {
                 _type: result._type,
                 request: {
                     type: "GET",
-                    url: process.env.DEPLOY_URL + process.env.PORT + "/parcheggio:" + result._id
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
                 }
         }});
     })
@@ -247,3 +410,4 @@ exports.parcheggio_delete = (req, res) => {
         });
     });
 }
+

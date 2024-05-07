@@ -3,6 +3,12 @@ const router = express.Router();
 
 const controllerParcheggio = require('../controllers/parcheggio');
 
+//Chiamata GET per visualizzare parcheggi vicini alla meta inserita
+router.get('/ricerca', controllerParcheggio.parcheggio_ricerca);
+
+//Chiamata GET per visualizzare un parcheggio
+router.get('/:parcheggioId', controllerParcheggio.parcheggio_get);
+
 // Chiamata GET per visualizzare tutti i parcheggi
 router.get('/', controllerParcheggio.parcheggio_get_all);
 

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Utente = require('../models/utenteAdmin');
-// ereditarietà?
 
 /* 
 Funzione che implementa la registrazione di un utente tramite una POST a /registrazione.
@@ -9,12 +8,17 @@ La password viene salvata nel database dopo un algoritmo di hash della libreria 
 L'utente non viene registrato se l'email è già presente nel db.
 */
 exports.registrazione = (req, res) => {
+    if(req.body._type != "UtenteAdmin" && req.body._type != "UtenteNormale"){
+        return res.status(400).json({
+            error: "_type field undefined"
+        });
+    }
     Utente.find({email: req.body.email})
     .exec()
     .then(utente => {
         if (utente.length >= 1) {
             return res.status(409).json({
-                message: 'Email già esistente'
+                error: 'Email già esistente'
             });
         } else {
             bcrypt.hash(req.body.email, 10, (err, hash) => {
@@ -23,13 +27,42 @@ exports.registrazione = (req, res) => {
                         error: err
                     });
                 } else {
-                    const user = new Utente({
-                        _id: new mongoose.Types.ObjectId(),
-                        email: req.body.email,
-                        password: hash,
-                        eta: req.body.eta,
-                        metPagamento: req.body.metPagamento
-                    });
+                    // Switch per utenteAdmin e utenteNormale
+                    let user;
+                    switch(req.body._type){
+                        case 'UtenteAdmin':{
+                            try{
+                                user = new Utente({
+                                    _id: new mongoose.Types.ObjectId(),
+                                    email: req.body.email,
+                                    password: hash
+                                });
+                            }catch{
+                                console.log(err);
+                                res.status(400).json({
+                                    error: err
+                                });
+                            }
+                            break;
+                        }
+                        case 'UtenteNormale':{
+                            try{
+                                user = new Utente({
+                                    _id: new mongoose.Types.ObjectId(),
+                                    email: req.body.email,
+                                    password: hash,
+                                    metPagamento: req.body.metPagamento,
+                                    veicoli: req.body.veicoli
+                                });
+                            }catch(err){
+                                console.log(err);
+                                res.status(400).json({
+                                    error: err
+                                });
+                            }
+                            break;
+                        }
+                    }
                     user
                     .save()
                     .then(result => {
@@ -46,5 +79,10 @@ exports.registrazione = (req, res) => {
                 }
             });
         }
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
     });
 };

@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const Utente = require('../models/utenteAdmin');
+const UtenteAdmin = require('../models/utenteAdmin');
+const UtenteNormale = require('../models/utenteNormale');
+
 
 /* 
 Funzione che implementa la registrazione di un utente tramite una POST a /registrazione.
@@ -8,10 +10,21 @@ La password viene salvata nel database dopo un algoritmo di hash della libreria 
 L'utente non viene registrato se l'email è già presente nel db.
 */
 exports.registrazione = (req, res) => {
-    if(req.body._type != "UtenteAdmin" && req.body._type != "UtenteNormale"){
-        return res.status(400).json({
-            error: "_type field undefined"
-        });
+    let Utente;
+    switch (req.body._type) {
+        case 'UtenteAdmin': {
+            Utente = UtenteAdmin;
+            break;
+        }
+        case 'UtenteNormale': {
+            Utente = UtenteNormale;
+            break;
+        }
+        default: {
+            return res.status(400).json({
+                error: "Invalid _type field"
+            });
+        }
     }
     Utente.find({email: req.body.email})
     .exec()
@@ -28,11 +41,11 @@ exports.registrazione = (req, res) => {
                     });
                 } else {
                     // Switch per utenteAdmin e utenteNormale
-                    let user;
+                    let nuovoUtente;
                     switch(req.body._type){
                         case 'UtenteAdmin':{
                             try{
-                                user = new Utente({
+                                nuovoUtente = new Utente({
                                     _id: new mongoose.Types.ObjectId(),
                                     email: req.body.email,
                                     password: hash
@@ -47,7 +60,7 @@ exports.registrazione = (req, res) => {
                         }
                         case 'UtenteNormale':{
                             try{
-                                user = new Utente({
+                                nuovoUtente = new Utente({
                                     _id: new mongoose.Types.ObjectId(),
                                     email: req.body.email,
                                     password: hash,
@@ -63,11 +76,16 @@ exports.registrazione = (req, res) => {
                             break;
                         }
                     }
-                    user
+                    console.log(nuovoUtente);
+                    nuovoUtente
                     .save()
                     .then(result => {
                         res.status(201).json({
-                            message: "Utente creato"
+                            message: "Utente creato",
+                            utenteCreato: {
+                                _type: result._type,
+                                email: result.email
+                            }
                         })
                     })
                     .catch(err => {

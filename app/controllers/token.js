@@ -35,7 +35,13 @@ exports.autenticazione = (req, res) => {
                 );
                 return res.status(200).json({
                     message: 'Autenticazione effettuata',
-                    token: token
+                    token: token,
+                    email: utenti[0].email,
+                    _id: utenti[0]._id,
+                    request: {
+                        type: 'GET',
+                        url: process.env.DEPLOY_URL + process.env.PORT + '/v1/utente/' + utenti[0]._id
+                    }
                 });
             }
             return res.status(401).json({

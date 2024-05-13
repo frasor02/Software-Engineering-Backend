@@ -138,11 +138,11 @@ exports.parcheggio_ricerca = (req, res) => {
       
 }
 
-//Funzione che implementa la chiamata GET a /parcheggio/parcheggioId
+//Funzione che implementa la chiamata GET a /parcheggio/:parcheggioId
 exports.parcheggio_get = (req, res) => {
     let id;
     try {
-        id = mongoose.Types.ObjectId( req.params.parcheggioId);
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
         if(!mongoose.Types.ObjectId.isValid(id)){
             throw new Error("Wrong id")
         }
@@ -184,7 +184,7 @@ exports.parcheggio_get_all = (req, res) => {
                     nome: doc.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/" + doc._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
                     }
                 }
             })
@@ -322,7 +322,7 @@ exports.parcheggio_post = (req, res) => {
                     nome: result.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/" + result._id
+                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
                     }
                 }
             })}
@@ -333,11 +333,11 @@ exports.parcheggio_post = (req, res) => {
     })});
 };
 
-// Funzione che implementa la chiamata PATCH a /parcheggio/parcheggioId
+// Funzione che implementa la chiamata PATCH a /parcheggio/:parcheggioId
 exports.parcheggio_patch = (req, res) => {
     let id;
     try {
-        id = mongoose.Types.ObjectId( req.params.parcheggioId );
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
         if(!mongoose.Types.ObjectId.isValid(id)){
             throw new Error("Wrong id")
         }
@@ -369,7 +369,7 @@ exports.parcheggio_patch = (req, res) => {
                 _type: result._type,
                 request: {
                     type: "GET",
-                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/" + result._id
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
                 }
         }});
     })
@@ -380,11 +380,11 @@ exports.parcheggio_patch = (req, res) => {
     });
 }
 
-//Funzione che implementa la chiamata DELETE a /parcheggio/parcheggioId
+//Funzione che implementa la chiamata DELETE a /parcheggio/:parcheggioId
 exports.parcheggio_delete = (req, res) => {
     let id;
     try {
-        id = mongoose.Types.ObjectId( req.params.parcheggioId );
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
         if(!mongoose.Types.ObjectId.isValid(id)){
             throw new Error("Wrong id")
         }

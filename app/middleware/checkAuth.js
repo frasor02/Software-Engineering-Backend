@@ -15,4 +15,4 @@ module.exports = (req, res, next) => {
             error: 'Autenticazione token fallita'
         });
     }
-}
+};

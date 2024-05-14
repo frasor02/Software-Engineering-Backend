@@ -55,7 +55,7 @@ exports.registrazione = (req, res) => {
                                     email: req.body.email,
                                     password: hash
                                 });
-                            }catch{
+                            }catch(err){
                                 console.log(err);
                                 res.status(400).json({
                                     error: err

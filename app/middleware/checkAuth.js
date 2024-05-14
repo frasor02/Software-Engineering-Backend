@@ -8,12 +8,33 @@ module.exports = (req, res, next) => {
             error: 'No token provided'
         })
     }
-    try {
-        const decodedToken = jwt.verify(token, process.env.JWT_KEY);
+    jwt.verify(token, process.env.JWT_KEY, (err, decodedToken) => {
+        if (err) {
+            switch (err.name) {
+                case 'TokenExpiredError': {
+                    return res.status(401).json({
+                        error: err.message // 'jwt expired'
+                    });
+                    break;
+                }
+                case 'JsonWebTokenError': {
+                    return res.status(401).json({
+                        error: err.message
+                    });
+                }
+                case 'NotBeforeError': {
+                    return res.status(401).json({
+                        error: err.message
+                    })
+                }
+                default: {
+                    return res.status(403).json({
+                        error: 'Autenticazione token fallita'
+                    });
+                    break;
+                }
+            }
+        }
         next();
-    } catch (error){
-        return res.status(403).json({
-            error: 'Autenticazione token fallita'
-        });
-    }
+    });
 };

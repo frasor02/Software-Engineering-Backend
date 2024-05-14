@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Controllo permessi admin
 module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     if (jwt.decode(token, process.env.JWT_KEY)._type != 'UtenteAdmin') {

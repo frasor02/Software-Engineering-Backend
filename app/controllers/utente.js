@@ -10,11 +10,6 @@ La password viene salvata nel database dopo un algoritmo di hash della libreria 
 L'utente non viene registrato se l'email è già presente nel db.
 */
 exports.registrazione = (req, res) => {
-    if (req.body.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/) == null){
-        return res.status(400).json({
-            error: "Invalid password"
-        })
-    }
     let Utente;
     switch (req.body._type) {
         case 'UtenteAdmin': {
@@ -39,7 +34,8 @@ exports.registrazione = (req, res) => {
                 error: 'Email già esistente'
             });
         } else {
-            bcrypt.hash(req.body.email, 10, (err, hash) => {
+            // Creazione hash password
+            bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if (err) {
                     return res.status(500).json({
                         error: err
@@ -82,6 +78,7 @@ exports.registrazione = (req, res) => {
                         }
                     }
                     console.log(nuovoUtente);
+                    // Salvataggio in db
                     nuovoUtente
                     .save()
                     .then(result => {
@@ -96,7 +93,7 @@ exports.registrazione = (req, res) => {
                     .catch(err => {
                         console.log(err);
                         res.status(500).json({
-                            message: "saving error",
+                            message: "Saving error",
                             error: err.message
                         });
                     });

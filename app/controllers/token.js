@@ -14,14 +14,16 @@ exports.autenticazione = (req, res) => {
                 error: 'Autenticazione fallita'
             });
         }
+        // Controllo password
         bcrypt.compare(req.body.password, utenti[0].password, (err, result) => {
             if (err) {
+                // Errore durante la compare
                 return res.status(401).json({
                     error: 'Autenticazione fallita'
                 });
             }
-            if (!result) {
-                console.log(utenti[0]._type);
+            if (result) {
+                // Password corretta => creazione token
                 const token = jwt.sign(
                     {
                         _id: utenti[0]._id,
@@ -44,6 +46,7 @@ exports.autenticazione = (req, res) => {
                     }
                 });
             }
+            // Password errata
             return res.status(401).json({
                 error: 'Autenticazione fallita'
             });

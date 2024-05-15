@@ -12,6 +12,8 @@ paths:
       operationId: postParcheggio
       tags: 
         - parcheggi
+      security:
+        - BearerAuth: [admin]
       requestBody:
         content:
           application/json:
@@ -158,6 +160,8 @@ paths:
       operationId: modifyParcheggioById
       tags: 
         - parcheggi
+      security:
+        - BearerAuth: [admin]
       parameters:
         - $ref: "#/components/parameters/parcheggioId" 
       requestBody:
@@ -178,6 +182,8 @@ paths:
       operationId: deleteParcheggioById
       tags: 
         - parcheggi
+      security:
+        - BearerAuth: [admin]
       parameters:
         - $ref: "#/components/parameters/parcheggioId" 
       responses:
@@ -234,6 +240,46 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/RicercaParcheggiViciniSuccessfulRes'
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+  /v1/utente/:
+    post:
+      summary: Registrazione di un utente nel sistema
+      description: Registra un nuovo utente nel sistema
+      operationId: register
+      tags:
+        - utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/UtenteAdminSchemaReg"
+              - $ref: "#/components/schemas/UtenteNormaleSchemaReg"
+      responses:
+        '201':
+          $ref: "#/components/responses/RegistraUtenteRes"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+  /v1/token/:
+    post:
+      summary: Autenticazione di un utente nel sistema
+      description: Autentica un nuovo utente nel sistema
+      operationId: login
+      tags:
+        - utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UtenteSchemaLog"
+      responses:
+        '200':
+          $ref: "#/components/responses/LoginUtenteRes"
         '4XX': 
           $ref: "#/components/responses/GeneralError"
         '5XX': 
@@ -486,7 +532,7 @@ components:
               enum:
               - Disponibile
               - Non disponibile
-    ParcheggioShortResSchema: #??????
+    ParcheggioShortResSchema:
       type: object
       required:
         - _id
@@ -509,7 +555,7 @@ components:
             type:
               type: string
               enum:
-              - GET #Va bene o serve anche altro?
+              - GET
             url:
               type: string
     ParcheggioPatchResSchema:
@@ -587,6 +633,62 @@ components:
       properties:
         error:
           type: string
+    VeicoloSchema:
+      type: object
+      properties:
+        tipoVeicolo:
+          type: string
+          enum:
+            - "auto"
+            - "moto"
+            - "furgone"
+            - "bus"
+        targa:
+          type: string
+    UtenteAdminSchemaReg:
+      type: object
+      properties:
+        _type: 
+          type: string
+          enum:
+            - "UtenteAdmin"
+        email:
+          type: string
+        password:
+          type: string
+    UtenteNormaleSchemaReg:
+      type: object
+      properties:
+        _type: 
+          type: string
+          enum:
+            - "UtenteNormale"
+        email:
+          type: string
+        password:
+          type: string
+        metPagamento:
+          type: string
+          enum:
+            - "carta di credito"
+            - "carta di debito"
+            - "paypal"
+        veicoli:
+          type: array
+          items:
+            $ref: "#/components/schemas/VeicoloSchema" 
+    UtenteSchemaLog:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
   responses:
     GeneralError:
       description: "Errore generico per cui viene mostrato un messaggio di errore"
@@ -647,6 +749,50 @@ components:
       links:
         GetParcheggioById: 
           $ref: '#/components/links/GetParcheggioById'
+    RegistraUtenteRes:
+      description: Risponde con un messaggio avvisando la creazione del'utente.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              utenteCreato:
+                type: object
+                properties:
+                  _type:
+                    type: string
+                    enum:
+                    - "UtenteAdmin"
+                    - "UtenteNormale"
+                  email:
+                    type: string
+    LoginUtenteRes:
+      description: Risponde con un messaggio avvisando l'autenticazione del'utente.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              token:
+                type: string
+              email:
+                type: string
+              _id:
+                type: string
+              request:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - "GET"
+                  url:
+                    type: string
+              
   links:
     GetParcheggioById:
       operationId: getParcheggioById

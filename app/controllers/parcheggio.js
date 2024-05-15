@@ -41,7 +41,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
                         nome: doc.nome,
                         request: {
                             type: "GET",
-                            url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
+                            url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/" + doc._id
                         }
                     }
                 })
@@ -142,7 +142,7 @@ exports.parcheggio_ricerca = (req, res) => {
 exports.parcheggio_get = (req, res) => {
     let id;
     try {
-        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
         if(!mongoose.Types.ObjectId.isValid(id)){
             throw new Error("Wrong id")
         }

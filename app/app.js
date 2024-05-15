@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
-const cors = require('cors')
+const cors = require('cors');
 
-const parcheggioRoutes = require('./routes/parcheggio')
+const parcheggioRoutes = require('./routes/parcheggio');
+const utenteRoutes = require('./routes/utente');
+const tokenRoutes = require('./routes/token');
 
 // Configurazione middleware di parsing
 app.use(express.json());
@@ -14,10 +16,12 @@ app.use((req,res,next) => {
 })
 
 // Richieste CORS
-app.use(cors())
+app.use(cors());
 
 // Routes per raggiungere risorse
 app.use('/v1/parcheggio', parcheggioRoutes);
+app.use('/v1/utente', utenteRoutes);
+app.use('/v1/token', tokenRoutes)
 
 // Handler errore 404 NOT FOUND di default
 app.use((req, res) => {

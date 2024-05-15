@@ -1,4 +1,7 @@
 const express = require('express');
+const checkAuth = require('../middleware/checkAuth');
+const checkAdmin = require('../middleware/checkAdmin');
+
 const router = express.Router();
 
 const controllerParcheggio = require('../controllers/parcheggio');
@@ -13,12 +16,12 @@ router.get('/:parcheggioId', controllerParcheggio.parcheggio_get);
 router.get('/', controllerParcheggio.parcheggio_get_all);
 
 // Chiamata POST per aggiungere un parcheggio
-router.post('/', controllerParcheggio.parcheggio_post);
+router.post('/', checkAuth, checkAdmin, controllerParcheggio.parcheggio_post);
 
-// Chiamata PATCJ che modifica gli attributi di un patcheggio
-router.patch('/:parcheggioId', controllerParcheggio.parcheggio_patch);
+// Chiamata PATCH che modifica gli attributi di un patcheggio
+router.patch('/:parcheggioId', checkAuth, checkAdmin, controllerParcheggio.parcheggio_patch);
 
 // Chiamata DELETE per eliminare un parcheggio
-router.delete('/:parcheggioId', controllerParcheggio.parcheggio_delete);
+router.delete('/:parcheggioId',checkAuth, checkAdmin, controllerParcheggio.parcheggio_delete);
 
 module.exports = router;

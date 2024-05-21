@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const pointSchema = require('./point')
 
 // Schema che rappresenta la classe Parcheggio
+/*Un parcheggio ha un certo numero di posti che è ottenuto dalla somma delle proprietà:
+numPostiDisabili + numPostiGravidanza + numPostiAuto + numPostiMoto + numPostiFurgone + numPostiBus
+Si è assunto in progettazione che i postiDisabili e i postiGravidanza siano postiAuto però per quelle determinate categtorie.
+Quindi i posti per le auto totali di un parcheggio sarebbero dati da numPostiDisabili + numPostiGravidanza + numPostiAuto
+*/
 const parcheggioSchema = mongoose.Schema({
     _id : { type: mongoose.Schema.Types.ObjectId, required: true},
     nome : { type: String, required: true},

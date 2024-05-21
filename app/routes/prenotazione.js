@@ -7,4 +7,6 @@ const controllerPrenotazione = require('../controllers/prenotazione');
 
 router.post("/",checkAuth, controllerPrenotazione.prenotazione_post);
 
+router.get("/", controllerPrenotazione.prenotazione_get);
+
 module.exports = router;

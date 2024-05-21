@@ -150,6 +150,7 @@ exports.parcheggio_get = (req, res) => {
         res.status(400).json({
             error: err.message
         });
+        return; // Risolve "Cannot set headers after they are sent to the client"
     };
     Parcheggio.findById(id).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
     .then(
@@ -345,6 +346,7 @@ exports.parcheggio_patch = (req, res) => {
         res.status(400).json({
             error: err.message
         });
+        return; // Risolve "Cannot set headers after they are sent to the client"
     };
     const updateOps = {};
     try{
@@ -392,6 +394,7 @@ exports.parcheggio_delete = (req, res) => {
         res.status(400).json({
             error: err.message
         });
+        return; // Risolve "Cannot set headers after they are sent to the client"
     };
     Parcheggio.findByIdAndDelete(id)
     .exec()

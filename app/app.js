@@ -5,6 +5,8 @@ const cors = require('cors');
 const parcheggioRoutes = require('./routes/parcheggio');
 const utenteRoutes = require('./routes/utente');
 const tokenRoutes = require('./routes/token');
+const prentoazioneRoutes = require('./routes/prenotazione');
+const prenotazione = require('./models/prenotazione');
 
 // Configurazione middleware di parsing
 app.use(express.json());
@@ -22,6 +24,7 @@ app.use(cors());
 app.use('/v1/parcheggio', parcheggioRoutes);
 app.use('/v1/utente', utenteRoutes);
 app.use('/v1/token', tokenRoutes)
+app.use('/v1/prenotazione', prentoazioneRoutes);
 
 // Handler errore 404 NOT FOUND di default
 app.use((req, res) => {

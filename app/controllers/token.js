@@ -40,10 +40,11 @@ exports.autenticazione = (req, res) => {
                     token: token,
                     email: utenti[0].email,
                     _id: utenti[0]._id,
+                    /*
                     request: {
                         type: 'GET',
                         url: process.env.DEPLOY_URL + process.env.PORT + '/v1/utente/' + utenti[0]._id
-                    }
+                    }*/
                 });
             }
             // Password errata

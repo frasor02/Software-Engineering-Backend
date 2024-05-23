@@ -11,7 +11,8 @@ const prenotazioneSchema = mongoose.Schema({
     tipoPosto: {type: String,
         enum: ["normale", "disabili", "gravidanza"],
         required: true},
-    veicolo: {type: Veicolo, required: true}
+    veicolo: {type: Veicolo, required: true},
+    isArrived: {type: Boolean, required: true} // conferma l'arrivo o meno dell'utente
 });
 
 module.exports = mongoose.model('Prenotazione', prenotazioneSchema);

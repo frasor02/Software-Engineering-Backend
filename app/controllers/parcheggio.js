@@ -3,6 +3,7 @@ const Parcheggio = require('../models/parcheggio');
 const ParcheggioFree = require('../models/parcheggioFree');
 const ParcheggioPay = require('../models/parcheggioPay');
 const ParcheggioVigilato = require('../models/parcheggioVigilato');
+const Prenotazione = require('../models/prenotazione');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
@@ -414,3 +415,41 @@ exports.parcheggio_delete = (req, res) => {
     });
 }
 
+// Funzione che fa la richiesta per vedere tutte le prenotazioni dato un parcheggio Vigilato
+exports.parcheggio_get_prenotazioni = (req, res) => {
+    let id;
+    try {
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            throw new Error("Wrong id")
+        }
+    } catch(err){
+        res.status(400).json({ // formato id del parcheggio non valido
+            error: err.message
+        });
+        return; // Evita l'errore "Cannot set headers after they are sent to the client" 
+    };
+    /* Se l'id fosse di un parcheggio non vigilato non ritorniamo nulla*/
+    Prenotazione.find({parcheggioId: id})
+    .then(docs => {
+        res.status(200).json({
+            count: docs.length,
+            prenotazioni: docs.map(doc =>{
+                return {
+                    _id: doc._id,
+                    parcheggioId: doc.parcheggioId,
+                    utenteMail : doc.utenteMail,
+                    dataPrenotazione : doc.dataPrenotazione,
+                    tipoPosto : doc.tipoPosto,
+                    veicolo : doc.veicolo,
+                    isArrived : doc.isArrived
+                }
+            })})
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({ // Find fallita
+            error: err
+        });
+    });
+};

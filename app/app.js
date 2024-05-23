@@ -7,6 +7,7 @@ const utenteRoutes = require('./routes/utente');
 const tokenRoutes = require('./routes/token');
 const prentoazioneRoutes = require('./routes/prenotazione');
 const prenotazione = require('./models/prenotazione');
+const cleanPrenotazione = require('./middleware/cleanPrenotazione');
 
 // Configurazione middleware di parsing
 app.use(express.json());
@@ -19,6 +20,9 @@ app.use((req,res,next) => {
 
 // Richieste CORS
 app.use(cors());
+
+// Elimina prenotazioni scadute
+app.use(cleanPrenotazione);
 
 // Routes per raggiungere risorse
 app.use('/v1/parcheggio', parcheggioRoutes);

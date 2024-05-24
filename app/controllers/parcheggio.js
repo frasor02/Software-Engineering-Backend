@@ -218,98 +218,75 @@ exports.parcheggio_post = (req, res) => {
                         throw new Error("undefined dataInizio o dataFine");
                     }
                     console.log(req.body.dataInizio);
-                    try{
-                        parcheggio = new ParcheggioFree({
-                            _id: new mongoose.Types.ObjectId(),
-                            nome: req.body.nome,
-                            posizione: req.body.posizione,
-                            numPosti: req.body.numPosti,
-                            isCoperto: req.body.isCoperto,
-                            statoParcheggio: req.body.statoParcheggio,
-                            numPostiDisabili: req.body.numPostiDisabili,
-                            numPostiGravidanza: req.body.numPostiGravidanza,
-                            numPostiAuto: req.body.numPostiAuto,
-                            numPostiMoto: req.body.numPostiMoto,
-                            numPostiFurgone : req.body.numPostiFurgone,
-                            numPostiBus : req.body.numPostiBus,
-                            isDisco: req.body.isDisco,
-                            dataInizio: req.body.dataInizio,
-                            dataFine: req.body.dataFine})
-                    }catch(err){                       
-                        res.status(400).json({
-                            error: err.message
-                        });
-                    };
+                    parcheggio = new ParcheggioFree({
+                        _id: new mongoose.Types.ObjectId(),
+                        nome: req.body.nome,
+                        posizione: req.body.posizione,
+                        numPosti: req.body.numPosti,
+                        isCoperto: req.body.isCoperto,
+                        statoParcheggio: req.body.statoParcheggio,
+                        numPostiDisabili: req.body.numPostiDisabili,
+                        numPostiGravidanza: req.body.numPostiGravidanza,
+                        numPostiAuto: req.body.numPostiAuto,
+                        numPostiMoto: req.body.numPostiMoto,
+                        numPostiFurgone : req.body.numPostiFurgone,
+                        numPostiBus : req.body.numPostiBus,
+                        isDisco: req.body.isDisco,
+                        dataInizio: req.body.dataInizio,
+                        dataFine: req.body.dataFine})
                 } else{
-                    try{
-                        parcheggio = new ParcheggioFree({
-                            _id: new mongoose.Types.ObjectId(),
-                            nome: req.body.nome,
-                            posizione: req.body.posizione,
-                            numPosti: req.body.numPosti,
-                            isCoperto: req.body.isCoperto,
-                            statoParcheggio: req.body.statoParcheggio,
-                            numPostiDisabili: req.body.numPostiDisabili,
-                            numPostiGravidanza: req.body.numPostiGravidanza,
-                            numPostiAuto: req.body.numPostiAuto,
-                            numPostiMoto: req.body.numPostiMoto,
-                            numPostiFurgone : req.body.numPostiFurgone,
-                            numPostiBus : req.body.numPostiBus,
-                            isDisco: req.body.isDisco
-                    })}catch(err){
-                        res.status(400).json({
-                            error: err.message
-                        })
-                    };;
+                    parcheggio = new ParcheggioFree({
+                        _id: new mongoose.Types.ObjectId(),
+                        nome: req.body.nome,
+                        posizione: req.body.posizione,
+                        numPosti: req.body.numPosti,
+                        isCoperto: req.body.isCoperto,
+                        statoParcheggio: req.body.statoParcheggio,
+                        numPostiDisabili: req.body.numPostiDisabili,
+                        numPostiGravidanza: req.body.numPostiGravidanza,
+                        numPostiAuto: req.body.numPostiAuto,
+                        numPostiMoto: req.body.numPostiMoto,
+                        numPostiFurgone : req.body.numPostiFurgone,
+                        numPostiBus : req.body.numPostiBus,
+                        isDisco: req.body.isDisco
+                    });
                 }
                 break;
             }
             case "ParcheggioPay":{
-                try{
-                    parcheggio = new ParcheggioPay({
-                        _id: new mongoose.Types.ObjectId(),
-                        nome: req.body.nome,
-                        posizione: req.body.posizione,
-                        numPosti: req.body.numPosti,
-                        isCoperto: req.body.isCoperto,
-                        statoParcheggio: req.body.statoParcheggio,
-                        numPostiDisabili: req.body.numPostiDisabili,
-                        numPostiGravidanza: req.body.numPostiGravidanza,
-                        numPostiAuto: req.body.numPostiAuto,
-                        numPostiMoto: req.body.numPostiMoto,
-                        numPostiFurgone : req.body.numPostiFurgone,
-                        numPostiBus : req.body.numPostiBus,
-                        tariffa: req.body.tariffa
-                })}catch(err){
-                    res.status(400).json({
-                        error: err.message
-                    })
-                };
+                parcheggio = new ParcheggioPay({
+                    _id: new mongoose.Types.ObjectId(),
+                    nome: req.body.nome,
+                    posizione: req.body.posizione,
+                    numPosti: req.body.numPosti,
+                    isCoperto: req.body.isCoperto,
+                    statoParcheggio: req.body.statoParcheggio,
+                    numPostiDisabili: req.body.numPostiDisabili,
+                    numPostiGravidanza: req.body.numPostiGravidanza,
+                    numPostiAuto: req.body.numPostiAuto,
+                    numPostiMoto: req.body.numPostiMoto,
+                    numPostiFurgone : req.body.numPostiFurgone,
+                    numPostiBus : req.body.numPostiBus,
+                    tariffa: req.body.tariffa});
                 break;
             }
             case "ParcheggioVigilato":{
-                try{
-                    parcheggio = new ParcheggioVigilato({
-                        _id: new mongoose.Types.ObjectId(),
-                        nome: req.body.nome,
-                        posizione: req.body.posizione,
-                        numPosti: req.body.numPosti,
-                        isCoperto: req.body.isCoperto,
-                        statoParcheggio: req.body.statoParcheggio,
-                        numPostiDisabili: req.body.numPostiDisabili,
-                        numPostiGravidanza: req.body.numPostiGravidanza,
-                        numPostiAuto: req.body.numPostiAuto,
-                        numPostiMoto: req.body.numPostiMoto,
-                        numPostiFurgone : req.body.numPostiFurgone,
-                        numPostiBus : req.body.numPostiBus,
-                        postiOccupati: req.body.postiOccupati,
-                        tariffa: req.body.tariffa
-                    })
-                }catch(err) {
-                    res.status(400).json({
-                        error: err.message
-                    })
-                };
+                parcheggio = new ParcheggioVigilato({
+                    _id: new mongoose.Types.ObjectId(),
+                    nome: req.body.nome,
+                    posizione: req.body.posizione,
+                    numPosti: req.body.numPosti,
+                    isCoperto: req.body.isCoperto,
+                    statoParcheggio: req.body.statoParcheggio,
+                    numPostiDisabili: req.body.numPostiDisabili,
+                    numPostiGravidanza: req.body.numPostiGravidanza,
+                    numPostiAuto: req.body.numPostiAuto,
+                    numPostiMoto: req.body.numPostiMoto,
+                    numPostiFurgone : req.body.numPostiFurgone,
+                    numPostiBus : req.body.numPostiBus,
+                    postiOccupati: req.body.postiOccupati,
+                    tariffa: req.body.tariffa
+                });
                 break;
             }
     }}catch(err){
@@ -332,10 +309,24 @@ exports.parcheggio_post = (req, res) => {
                 }
             })}
     ).catch(err =>{
-        console.log(err);
-        res.status(500).json({
-            error: err.message
-    })});
+        switch(err.name){
+            case "ValidationError":{
+                console.log(err);
+                res.status(400).json({ // Errore di database
+                    error: err.message
+                })
+                break;
+            }
+            default:{
+                console.log(err);
+                res.status(500).json({ // Errore di database
+                    error: err.message
+                })
+                break;
+            }
+        }
+        
+    });
 };
 
 // Funzione che implementa la chiamata PATCH a /parcheggio/:parcheggioId

@@ -208,6 +208,9 @@ exports.parcheggio_post = (req, res) => {
         if(req.body._type != "ParcheggioFree" &&  req.body._type != "ParcheggioPay" && req.body._type != "ParcheggioVigilato"){
             throw new Error("undefined _type field");
         };
+        if(req.body.nome === ""){ // Controllo che il nome del parcheggio non sia vuoto
+            throw new Error("undefined nome field");
+        };
         switch(req.body._type){
             case "ParcheggioFree":{
                 if(req.body.isDisco){

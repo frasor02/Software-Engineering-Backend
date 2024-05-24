@@ -1,24 +1,24 @@
-require("dotenv").config();
 const request = require('supertest');
 const app = require('../app');
 const mongoose = require('mongoose');
 const Test = require('supertest/lib/test');
 const jwt = require('jsonwebtoken'); // per creare e firmare i token
+
 // Scrittura Test Case
 
 describe('POST /v1/parcheggio/', () => {
 
 
     beforeAll(async () => {
-        jest.setTimeout(8000);
-        jest.unmock('mongoose');
-        connection = await  mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
-        console.log('Database connected!');
+        //jest.setTimeout(8000);
+        //jest.unmock('mongoose');
+        //connection = await  mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
+        //console.log('Database connected!');
     });
     
-    afterEach( () => {
-        mongoose.connection.close(true);
-        console.log("Database connection closed");
+    afterAll( () => {
+        //mongoose.connection.close(true);
+        //console.log("Database connection closed");
     });
 
     // Creazione token valido
@@ -119,4 +119,74 @@ describe('POST /v1/parcheggio/', () => {
         .expect(400, { error: 'ParcheggioVigilato validation failed: statoParcheggio: `abc` is not a valid enum value for path `statoParcheggio`.' });
     });
 
+});
+
+describe('PATCH /v1/parcheggio/:parcheggioId', () => {
+
+    // Creazione token valido
+    var payload = {
+        _id: mongoose.Schema.Types.ObjectId,
+        _type: "UtenteAdmin",
+        email: "admin@test.com"
+    }
+    var options = {
+        expiresIn: "1h" // scadenza in un ora
+    }
+    var token = jwt.sign(payload,process.env.JWT_KEY, options);
+
+    test("Test #3: Modifica di un parcheggio esistente con proprietà propName non valida", () => {
+        UpdatePayload = [
+            {propName : "abc", // Non valido
+            value : 0}
+        ]; 
+
+        return request(app)
+        .patch('/v1/parcheggio/:' + new mongoose.Types.ObjectId())
+        .set('Authorization', "Bearer " + token)
+        .set('Accept', 'application/json')
+        .send(UpdatePayload) // Manda un body Json
+        .expect(400, { error: 'invalid propName field' });
+
+    });
+
+});
+
+describe("DELETE /v1/parcheggio/:parcheggioId", () => {
+    let parcheggioDelete;
+    var parcheggioId = new mongoose.Types.ObjectId();
+
+    beforeAll( () => {
+        const Parcheggio = require('../models/parcheggio');
+        parcheggioDelete = jest.spyOn(Parcheggio, 'findByIdAndDelete').mockImplementation((id) => {
+            if(id === parcheggioId){
+                return new Promise.resolve();
+            } else {
+                return new Promise.reject(new Error())
+            }
+        });
+    });
+    
+    afterAll(async () => {
+        parcheggioDelete.mockRestore();
+    });
+
+    // Creazione token valido
+    var payload = {
+        _id: mongoose.Schema.Types.ObjectId,
+        _type: "UtenteAdmin",
+        email: "admin@test.com"
+    }
+    var options = {
+        expiresIn: "1h" // scadenza in un ora
+    }
+    var token = jwt.sign(payload,process.env.JWT_KEY, options);
+
+    test("Test #4: Rimozione di un parcheggio con id non salvato in database", () => {
+        return request(app)
+        .delete('/v1/parcheggio/:' + parcheggioId)
+        .set('Authorization', "Bearer " + token)
+        .set('Accept', 'application/json')
+        .expect(500, {  }); //error: 'parcheggio not found to delete'
+
+    });
 });

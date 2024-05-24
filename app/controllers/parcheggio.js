@@ -344,10 +344,14 @@ exports.parcheggio_patch = (req, res) => {
         return; // Risolve "Cannot set headers after they are sent to the client"
     };
     const updateOps = {};
+    validParams = ["nome", "posizione", "numPosti", "isCoperto", "statoParcheggio", "numPostiDisabili", "numPostiGravidanza", "numPostiAuto","numPostiMoto","numPostiFurgone","numPostiBus", "isDisco", "dataInizio", "dataFine","tariffa", "postiOccupati"];
     try{
         for (const ops of req.body) {
             if(ops.propName == "_type" || ops.propName == "_id"){
                 throw new Error("Cant modify property");
+            }
+            if(!validParams.includes(ops.propName)){
+                throw new Error("invalid propName field");
             }
             updateOps[ops.propName] = ops.value;
         }
@@ -355,6 +359,7 @@ exports.parcheggio_patch = (req, res) => {
         res.status(400).json({
             error: err.message
         });
+        return;
     }
     Parcheggio.findByIdAndUpdate(id, updateOps)
     .exec()
@@ -392,8 +397,14 @@ exports.parcheggio_delete = (req, res) => {
         return; // Risolve "Cannot set headers after they are sent to the client"
     };
     Parcheggio.findByIdAndDelete(id)
-    .exec()
     .then(result => {
+        if(result === null){
+            console.log("parcheggio not found to delete")
+            res.status(404).json({
+                error: "parcheggio not found to delete"
+            });
+            return;
+        }
         res.status(200).json({
             message: " Parcheggio Deleted Successfully",
             deletedParcheggio:{ 
@@ -402,7 +413,7 @@ exports.parcheggio_delete = (req, res) => {
                 nome: result.nome
         }});
     }).catch( err => {
-        console.log(err);
+        //console.log(err);
         res.status(500).json({
             error: err.message
         });

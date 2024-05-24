@@ -8,19 +8,6 @@ const jwt = require('jsonwebtoken'); // per creare e firmare i token
 
 describe('POST /v1/parcheggio/', () => {
 
-
-    beforeAll(async () => {
-        //jest.setTimeout(8000);
-        //jest.unmock('mongoose');
-        //connection = await  mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
-        //console.log('Database connected!');
-    });
-    
-    afterAll( () => {
-        //mongoose.connection.close(true);
-        //console.log("Database connection closed");
-    });
-
     // Creazione token valido
     var payload = {
         _id: mongoose.Schema.Types.ObjectId,
@@ -152,23 +139,15 @@ describe('PATCH /v1/parcheggio/:parcheggioId', () => {
 });
 
 describe("DELETE /v1/parcheggio/:parcheggioId", () => {
-    let parcheggioDelete;
     var parcheggioId = new mongoose.Types.ObjectId();
 
     beforeAll( () => {
         const Parcheggio = require('../models/parcheggio');
-        parcheggioDelete = jest.spyOn(Parcheggio, 'findByIdAndDelete').mockImplementation((id) => {
-            if(id === parcheggioId){
-                return new Promise.resolve();
-            } else {
-                return new Promise.reject(new Error())
-            }
-        });
+        Parcheggio.findByIdAndDelete = jest.fn().mockResolvedValue(null);
+
     });
     
-    afterAll(async () => {
-        parcheggioDelete.mockRestore();
-    });
+
 
     // Creazione token valido
     var payload = {
@@ -186,7 +165,7 @@ describe("DELETE /v1/parcheggio/:parcheggioId", () => {
         .delete('/v1/parcheggio/:' + parcheggioId)
         .set('Authorization', "Bearer " + token)
         .set('Accept', 'application/json')
-        .expect(500, {  }); //error: 'parcheggio not found to delete'
+        .expect(404, { error: 'parcheggio not found to delete' });
 
     });
 });

@@ -30,7 +30,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
             }
         }
         
-    ).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
+    )
     .then(
         docs => {
             const response = {
@@ -68,10 +68,32 @@ exports.parcheggio_ricerca = (req, res) => {
     let isCoperto = req.query.isCoperto;
     let utente = req.query.utente;
     let veicolo = req.query.veicolo;
-    console.log(lat, long);
-    console.log(isCoperto);
-    console.log(utente);
-    console.log(veicolo);
+    // Controllo dell'input
+    if(lat < 46.036073449255646 || lat > 46.17933757653747){
+        res.status(400).json({error: "lat out of map bounds"});
+        return;
+    }
+    if(long < 11.097098093783192 || long > 11.171938222971134){
+        res.status(400).json({error: "long out of map bounds"})
+        return;
+    }
+    
+    if (!["true", "false"].includes(isCoperto)) {
+        res.status(400).json({error: "isCoperto not boolean"})
+        return;
+    }
+    
+    validUtente = ["disabile", "gravidanza", undefined];
+    
+    if(!validUtente.includes(utente)){
+        res.status(400).json({error: "utente not valid"})
+        return;
+    }
+    validVeicolo = ["auto","moto","furgone","bus", undefined];
+    if(!validVeicolo.includes(veicolo)){
+        res.status(400).json({error: "veicolo not valid"})
+        return;
+    }
     
     switch (utente) { 
         case "disabile": {
@@ -294,7 +316,7 @@ exports.parcheggio_post = (req, res) => {
             error: err.message
     });
     }
-    console.log(parcheggio);
+    //console.log(parcheggio);
     parcheggio.save().then(result => {
         res.status(201).json({
             message: "Created Parcheggio Successfully",
@@ -311,14 +333,12 @@ exports.parcheggio_post = (req, res) => {
     ).catch(err =>{
         switch(err.name){
             case "ValidationError":{
-                console.log(err);
                 res.status(400).json({ // Errore di database
                     error: err.message
                 })
                 break;
             }
             default:{
-                console.log(err);
                 res.status(500).json({ // Errore di database
                     error: err.message
                 })

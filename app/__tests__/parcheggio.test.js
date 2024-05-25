@@ -147,8 +147,6 @@ describe("DELETE /v1/parcheggio/:parcheggioId", () => {
 
     });
     
-
-
     // Creazione token valido
     var payload = {
         _id: mongoose.Schema.Types.ObjectId,
@@ -169,3 +167,91 @@ describe("DELETE /v1/parcheggio/:parcheggioId", () => {
 
     });
 });
+
+describe("GET /v1/parcheggio/ricerca", () => {
+    beforeAll( () => {
+        const Parcheggio = require('../models/parcheggio');
+        Parcheggio.find = jest.fn().mockResolvedValue([]);
+    });
+
+    test("Test #5: Ricerca con longitudine invalida", () => {
+        const query = {
+            long : 180, // Non valido
+            lat : 46.046073449255646,
+            isCoperto : true,
+            utente : undefined,
+            veicolo: undefined
+        }
+        return request(app)
+        .get('/v1/parcheggio/ricerca?long=' + query.long + '&lat=' + query.lat + '&isCoperto=' + query.isCoperto + '&utente=' + query.utente + '&veicolo=' + query.veicolo)
+        .set('Accept', 'application/json')
+        .expect(400, { error: 'long out of map bounds' });
+    });
+
+
+    test("Test #6: Ricerca con latitudine invalida", () => {
+        const query = {
+            long : 11.098098093783192,
+            lat : 2000, // non valida
+            isCoperto : true,
+        }
+        return request(app)
+        .get('/v1/parcheggio/ricerca?long=' + query.long + '&lat=' + query.lat + '&isCoperto=' + query.isCoperto)
+        .set('Accept', 'application/json')
+        .expect(400, { error: 'lat out of map bounds' });
+    });
+
+    test("Test #7: Ricerca con parametro isCoperto non valido", () => {
+        const query = {
+            long : 11.098098093783192,
+            lat : 46.046073449255646,
+            isCoperto : "abc", // Non valido
+
+        }
+        return request(app)
+        .get('/v1/parcheggio/ricerca?long=' + query.long + '&lat=' + query.lat + '&isCoperto=' + query.isCoperto)
+        .set('Accept', 'application/json')
+        .expect(400, { error: 'isCoperto not boolean' });
+    });
+
+    test("Test #8: Ricerca con parametro utente non valido", () => {
+        const query = {
+            long : 11.098098093783192,
+            lat : 46.046073449255646,
+            isCoperto : true,
+            utente : "abc", // non valido
+        }
+        return request(app)
+        .get('/v1/parcheggio/ricerca?long=' + query.long + '&lat=' + query.lat + '&isCoperto=' + query.isCoperto + '&utente=' + query.utente)
+        .set('Accept', 'application/json')
+        .expect(400, { error: 'utente not valid' });
+    });
+
+
+    test("Test #9: Ricerca con parametro veicolo non valido", () => {
+        const query = {
+            long : 11.098098093783192,
+            lat : 46.046073449255646,
+            isCoperto : true,
+            veicolo: "abc" // non valido
+        }
+        return request(app)
+        .get('/v1/parcheggio/ricerca?long=' + query.long + '&lat=' + query.lat + '&isCoperto=' + query.isCoperto +  '&veicolo=' + query.veicolo)
+        .set('Accept', 'application/json')
+        .expect(400, { error: 'veicolo not valid' });
+    });
+
+    test("Test #10: Ricerca con risultato vuoto", () => {
+        const query = {
+            long : 11.098098093783192,
+            lat : 46.046073449255646,
+            isCoperto : true,
+            utente: "disabile",
+            veicolo: "auto"
+        }
+        return request(app)
+        .get('/v1/parcheggio/ricerca?long=' + query.long + '&lat=' + query.lat + '&isCoperto=' + query.isCoperto + '&utente=' + query.utente + '&veicolo=' + query.veicolo)
+        .set('Accept', 'application/json')
+        .expect(200, { count: 0, parcheggi: []  });
+    });
+})

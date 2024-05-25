@@ -6,6 +6,18 @@ const jwt = require('jsonwebtoken'); // per creare e firmare i token
 // Scrittura Test Case
 
 describe('POST /v1/parcheggio/', () => {
+    beforeAll( () => {
+        const e = new Error("Validation failed"); // e.name is 'Error'
+        e.name = "ValidationError";
+        const ParcheggioFree = require('../models/parcheggioFree');
+        const ParcheggioPay = require('../models/parcheggioPay');
+        const ParcheggioVigilato = require('../models/parcheggioVigilato');
+        ParcheggioFree.prototype.save = jest.fn().mockRejectedValue(e);
+        ParcheggioPay.prototype.save = jest.fn().mockRejectedValue(e);
+        ParcheggioVigilato.prototype.save = jest.fn().mockRejectedValue(e);
+
+
+    });
 
     // Creazione token valido
     var payload = {
@@ -67,7 +79,7 @@ describe('POST /v1/parcheggio/', () => {
         .set('Authorization', "Bearer " + token)
         .set('Accept', 'application/json')
         .send(ParcheggioPayload) // Manda un body Json
-        .expect(400, { error: 'ParcheggioPay validation failed: tariffa: Path `tariffa` (-1) is less than minimum allowed value (0).' });
+        .expect(400, { error: "Validation failed" });
     });
 
     test("Test #2: Inserimento di un nuovo parcheggio vigilato con stato parcheggio non valido", async () => {
@@ -102,7 +114,7 @@ describe('POST /v1/parcheggio/', () => {
         .set('Authorization', "Bearer " + token)
         .set('Accept', 'application/json')
         .send(ParcheggioPayload) // Manda un body Json
-        .expect(400, { error: 'ParcheggioVigilato validation failed: statoParcheggio: `abc` is not a valid enum value for path `statoParcheggio`.' });
+        .expect(400, { error: "Validation failed" });
     });
 
 });

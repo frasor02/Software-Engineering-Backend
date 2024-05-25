@@ -71,7 +71,7 @@ describe('POST /v1/utente/', () => {
             const UtenteNormale = require('../models/utenteNormale');
             UtenteAdmin.find = jest.fn().mockResolvedValue([]);
             UtenteNormale.find = jest.fn().mockResolvedValue([]);
-            UtenteAdmin.save = jest.fn().mockResolvedValue({_type: "UtenteAdmin", email: "test@unitn.it"});
+            UtenteAdmin.prototype.save = jest.fn().mockResolvedValue({_type: "UtenteAdmin", email: "test@unitn.it"});
             UtenteNormale.prototype.save = jest.fn().mockResolvedValue({_type: "UtenteNormale", email: "test@unitn.it"});
         });
         

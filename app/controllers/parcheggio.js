@@ -175,11 +175,30 @@ exports.parcheggio_get = (req, res) => {
         });
         return; // Risolve "Cannot set headers after they are sent to the client"
     };
-    Parcheggio.findById(id).select("_type _id nome posizione type coordinates numPosti isCoperto statoParcheggio numPostiDisabili numPostiGravidanza numPostiAuto numPostiMoto numPostiFurgone numPostiBus isDisco dataInizio dataFine tariffa postiOccupati")
+    Parcheggio.findById(id)
     .then(
         doc => {
             res.status(200).json({
-                "res": doc
+                "res":{
+                    "_type": doc._type,
+                    "_id": doc._id,
+                    "nome": doc.nome,
+                    "type": doc.type,
+                    "posizione": doc.posizione,
+                    "numPosti": doc.numPosti,
+                    "statoParcheggio": doc.statoParcheggio,
+                    "numPostiDisabili": doc.numPostiDisabili,
+                    "numPostiGravidanza": doc.numPostiGravidanza,
+                    "numPostiAuto": doc.numPostiAuto,
+                    "numPostiMoto": doc.numPostiMoto,
+                    "numPostiFurgone": doc.numPostiFurgone,
+                    "numPostiBus": doc.numPostiBus,
+                    "isDisco": doc.isDisco,
+                    "dataInizio": doc.dataInizio, 
+                    "dataFine": doc.dataFine,
+                    "tariffa": doc.tariffa,
+                    "postiOccupati": doc.postiOccupati
+                }  
             })
         }
 

@@ -254,4 +254,26 @@ describe("GET /v1/parcheggio/ricerca", () => {
         .set('Accept', 'application/json')
         .expect(200, { count: 0, parcheggi: []  });
     });
-})
+});
+
+describe("GET /v1/parcheggio/:parcheggioId", () => {
+    beforeAll( () => {
+        const Parcheggio = require('../models/parcheggio');
+        Parcheggio.findById = jest.fn().mockResolvedValue({});
+    });
+
+    test("Test #11: Ricerca parcheggio con parcheggioId non valido", ()=>{
+        return request(app)
+        .get('/v1/parcheggio/:' + "abc") // Invio id non valido
+        .set('Accept', 'application/json')
+        .expect(400, { error: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters' });
+    });
+
+    test("Test #12: Ricerca parcheggio con parcheggioId non esistente", ()=>{
+        var parcheggioId = new mongoose.Types.ObjectId(); // Generiamo un id con formato valido
+        return request(app)
+        .get('/v1/parcheggio/:' + parcheggioId)
+        .set('Accept', 'application/json')
+        .expect(200, {"res": {}});
+    });
+});

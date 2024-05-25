@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
 const mongoose = require('mongoose');
-const Test = require('supertest/lib/test');
 const jwt = require('jsonwebtoken'); // per creare e firmare i token
 
 // Scrittura Test Case
@@ -20,7 +19,7 @@ describe('POST /v1/parcheggio/', () => {
     var token = jwt.sign(payload,process.env.JWT_KEY, options);
 
     test("Test #0: Inserimento di un nuovo parcheggio gratuito con nome non valido", async () => {
-        ParcheggioPayload = {
+        let ParcheggioPayload = {
             _type: "ParcheggioFree",
             nome: "",
             posizione: {type: {type: "Point"},coordinates: [12,15]},
@@ -46,7 +45,7 @@ describe('POST /v1/parcheggio/', () => {
     });
 
     test("Test #1: Inserimento di un nuovo parcheggio a pagamento con tariffa negativa", async () => {
-        ParcheggioPayload = {
+        let ParcheggioPayload = {
             _type: "ParcheggioPay",
             nome: "Parcheggio Piazza Test",
             posizione: {type: {type: "Point"},coordinates: [12,15]},
@@ -72,7 +71,7 @@ describe('POST /v1/parcheggio/', () => {
     });
 
     test("Test #2: Inserimento di un nuovo parcheggio vigilato con stato parcheggio non valido", async () => {
-        ParcheggioPayload = {
+        let ParcheggioPayload = {
             _type: "ParcheggioVigilato",
             nome: "Parcheggio Piazza Test",
             posizione: {type: {type: "Point"},coordinates: [12,15]},

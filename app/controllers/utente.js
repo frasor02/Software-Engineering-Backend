@@ -10,6 +10,16 @@ La password viene salvata nel database dopo un algoritmo di hash della libreria 
 L'utente non viene registrato se l'email è già presente nel db.
 */
 exports.registrazione = (req, res) => {
+    // Controllo che ci siano email e password
+    if(req.body.email === undefined){
+        res.status(400).json({error: "Missing email"});
+        return;
+    }
+    if(req.body.password === undefined){
+        res.status(400).json({error: "Missing password"});
+        return;
+    }
+
     let Utente;
     switch (req.body._type) {
         case 'UtenteAdmin': {
@@ -18,6 +28,11 @@ exports.registrazione = (req, res) => {
         }
         case 'UtenteNormale': {
             Utente = UtenteNormale;
+            const validMetPagamento = ['paypal', 'carta di credito', 'carta di debito'];
+            if (!validMetPagamento.includes(req.body.metPagamento)){ // Controllo input prima di salvare il dato
+                res.status(400).json({error: "Invalid metPagamento"});
+                return;
+            }
             break;
         }
         default: {
@@ -27,7 +42,6 @@ exports.registrazione = (req, res) => {
         }
     }
     Utente.find({email: req.body.email})
-    .exec()
     .then(utente => {
         if (utente.length >= 1) {
             return res.status(409).json({
@@ -45,35 +59,21 @@ exports.registrazione = (req, res) => {
                     let nuovoUtente;
                     switch(req.body._type){
                         case 'UtenteAdmin':{
-                            try{
-                                nuovoUtente = new Utente({
-                                    _id: new mongoose.Types.ObjectId(),
-                                    email: req.body.email,
-                                    password: hash
-                                });
-                            }catch(err){
-                                console.log(err);
-                                res.status(400).json({
-                                    error: err
-                                });
-                            }
+                            nuovoUtente = new Utente({
+                                _id: new mongoose.Types.ObjectId(),
+                                email: req.body.email,
+                                password: hash
+                            });
                             break;
                         }
-                        case 'UtenteNormale':{
-                            try{
-                                nuovoUtente = new Utente({
-                                    _id: new mongoose.Types.ObjectId(),
-                                    email: req.body.email,
-                                    password: hash,
-                                    metPagamento: req.body.metPagamento,
-                                    veicoli: req.body.veicoli
-                                });
-                            }catch(err){
-                                console.log(err);
-                                res.status(400).json({
-                                    error: err
-                                });
-                            }
+                    case 'UtenteNormale':{
+                            nuovoUtente = new Utente({
+                                _id: new mongoose.Types.ObjectId(),
+                                email: req.body.email,
+                                password: hash,
+                                metPagamento: req.body.metPagamento,
+                                veicoli: req.body.veicoli
+                            });
                             break;
                         }
                     }

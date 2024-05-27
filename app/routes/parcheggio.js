@@ -27,6 +27,9 @@ router.patch('/:parcheggioId', checkAuth, checkAdmin, controllerParcheggio.parch
 // Chiamata DELETE per eliminare un parcheggio
 router.delete('/:parcheggioId',checkAuth, checkAdmin, controllerParcheggio.parcheggio_delete);
 
+//Chiamata GET per vedere i feedback dato un parcheggio
+router.get("/:parcheggioId/feedback", controllerParcheggio.parcheggio_get_feedback);
+
 
 
 module.exports = router;

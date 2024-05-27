@@ -6,8 +6,9 @@ Gestiamo anche l'arrivo di un utente o meno con una variabile booleana che viene
 da parte di un utente admin. Se l'utente è arrivato non diminuisco i posti occupati altrimenti lo diminuisco di uno.*/
 
 
-var waitTime = 5*60*1000; // 5 minuti in millisecondi
+var waitTime = 60*60*1000; // 1 ora in millisecondi
 var lastRequestTime = new Date();
+lastRequestTime.setTime(new Date().getTime + waitTime);
 module.exports = (req, res, next) => {
     var now = new Date();
     if(now.getTime() - lastRequestTime.getTime() <= waitTime){

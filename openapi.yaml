@@ -284,8 +284,111 @@ paths:
           $ref: "#/components/responses/GeneralError"
         '5XX': 
           $ref: "#/components/responses/GeneralError"
+  /v1/prenotazione/:
+    post:
+      summary: Prenotazione di un parcheggio
+      description: Prenota un parcheggio 
+      operationId: prenotazioneParcheggio 
+      tags:
+      - prenotazione
+      security:
+        - BearerAuth: [utente]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostPrenotazioneParcheggio"
+      responses:
+        '200':
+          $ref: "#/components/responses/PostPrenotazioneParcheggio"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError" 
+    get: 
+      summary: Visualizza prenotazione dato un utente
+      description: Visualizza una prenotazione dato un utente
+      operationId: visualizzazionePrenotazione
+      tags:
+        - prenotazione
+      security:
+        - BearerAuth: [utente]
+      responses:
+        '200':
+          $ref: "#/components/responses/GetPrenotazioneParcheggio"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+
+  /v1/parcheggio/:{parcheggioId}/prenotazione:
+    get: 
+      summary: Visualizza prenotazione dato un parcheggio
+      description: Visualizza una prenotazione dato un parcheggio
+      operationId: visualizzazionePrenotazioneParcheggio
+      tags:
+      - prenotazione
+      security:
+        - BearerAuth: [admin]
+      parameters:
+        - $ref: "#/components/parameters/parcheggioId"
+      responses:
+        '200':
+          $ref: "#/components/responses/GetPrenotazioneParcheggio"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+
+
+  /v1/prenotazione/:{prenotazioneId}/arrivo:
+    patch:
+      summary: Modifica campo isArrived della prenotazione 
+      description: Modifica campo isArrived della prenotazione
+      operationId: modificaPrenotazione
+      tags:
+      - prenotazione
+      security:
+        - BearerAuth: [admin]
+      parameters:
+        - $ref: "#/components/parameters/prenotazioneId"
+      responses:
+        '200':
+          $ref: "#/components/responses/PatchPrenotazione"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+    
+
+  /v1/prenotazione/:{prenotazioneId}:
+    delete:
+      summary: Elimina prenotazione 
+      description: Elimina prenotazione
+      operationId: eliminaPrenotazione
+      tags:
+      - prenotazione
+      security:
+        - BearerAuth: [utente]
+      parameters:
+        - $ref: "#/components/parameters/prenotazioneId"
+      responses:
+        '200':
+          $ref: "#/components/responses/DeletePrenotazione"
+        '4XX': 
+          $ref: "#/components/responses/GeneralError"
+        '5XX': 
+          $ref: "#/components/responses/GeneralError"
+
 components:
   parameters:
+    prenotazioneId:
+        name: prenotazioneId
+        in: path
+        description: ID della prenotazione
+        required: true
+        schema:
+          type: string 
     parcheggioId:
         name: parcheggioId
         in: path
@@ -294,6 +397,16 @@ components:
         schema:
           type: string 
   schemas:
+    PostPrenotazioneParcheggio:
+      type: object
+      required:
+        - parcheggioId
+        - tipoPosto
+      properties:
+        parcheggioId:
+          type: string
+        tipoPosto:
+          type: string
     ParcheggioSchema:
       type: object
       required:
@@ -690,6 +803,116 @@ components:
       scheme: bearer
       bearerFormat: JWT 
   responses:
+    PatchPrenotazione:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              modifiedPrenotazione:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  isArrived: 
+                    type: boolean
+                    enum:
+                      - true
+                  
+    DeletePrenotazione:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              deletedPrenotazione:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  parcheggioId:
+                    type: string
+                  utenteMail:
+                    type: string
+                  dataPrenotazione:
+                    type: string
+                  tipoPosto:
+                    type: string
+                  veicolo:
+                    type: object
+                    properties:
+                      tipoVeicolo:
+                        type: string
+                      targa:
+                        type: string
+    GetPrenotazioneParcheggio:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              count:
+                type: string
+              prenotazioni:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  parcheggioId: 
+                    type: string
+                  utenteMail:
+                    type: string
+                  dataPrenotazione:
+                    type: string
+                  tipoPosto:
+                    type: string
+                  veicolo:
+                    type: object
+                    properties:
+                      tipoVeicolo:
+                        type: string
+                      targa:
+                        type: string
+                  isArrived:
+                    type: boolean
+                  
+    PostPrenotazioneParcheggio:
+      description: ""
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              createdPrenotazione:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  parcheggioId:
+                    type: string
+                  utenteMail:
+                    type: string
+                  dataPrenotazione:
+                    type: string
+                  tipoPosto:
+                    type: string
+                  veicolo:
+                    type: object
+                    properties:
+                      tipoVeicolo:
+                        type: string
+                      targa:
+                        type: string
+
     GeneralError:
       description: "Errore generico per cui viene mostrato un messaggio di errore"
       content: 

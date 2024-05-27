@@ -7,7 +7,6 @@ const Utente = require('../models/utente');
 // Funzione che implementa l'autenticazione, con la creazione di un token
 exports.autenticazione = (req, res) => {
     Utente.find({ email: req.body.email })
-    .exec()
     .then(utenti => {
         if (utenti.length < 1){
             return res.status(401).json({
@@ -39,7 +38,7 @@ exports.autenticazione = (req, res) => {
                     message: 'Autenticazione effettuata',
                     token: token,
                     email: utenti[0].email,
-                    _id: utenti[0]._id,
+                    _id: utenti[0]._id
                     /*
                     request: {
                         type: 'GET',

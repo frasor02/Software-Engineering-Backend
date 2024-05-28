@@ -33,9 +33,14 @@ exports.getFeedback = (req, res) => {
 
 // Funzione che fa la post di un feedback
 exports.postFeedback = (req, res) => {
+    if (!req.body.parcheggioId || !req.body.rating || !req.body.testoFeedback){
+        return res.status(400).json({
+            error: 'Parametri mancanti'
+        });
+    }
+
     const token = req.headers.authorization.split(" ")[1];
     const utenteToken = jwt.decode(token);
-    
     Parcheggio.find({_id : req.body.parcheggioId})
     .then(parcheggio => {
         if(parcheggio.length == 1){
@@ -63,19 +68,19 @@ exports.postFeedback = (req, res) => {
                     ).catch(err => {
                         console.log(err);
                         res.status(500).json({ // Errore database non ha salvato il parcheggio
-                            error: err
+                            error: err.message
                         });
                     });
                 }else{
                     console.log("Email not found");
-                    res.status(400).json({ // L'email non è associato ad un solo utente
+                    res.status(400).json({ // L'email non è associato a nessun utente
                         error: "Email not found"
                     });
                 }
             }).catch(err => {
                 console.log(err);
                 res.status(500).json({ // L'email utente non è corretta, find non eseguita
-                    error: err
+                    error: err.message
                 });
             })
         } else{

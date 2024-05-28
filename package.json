@@ -4,15 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --setupFiles dotenv/config",
     "start": "node index.js",
     "dev": "node -r dotenv/config index.js"
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Frasor2002/Ricerca-Parcheggio-Efficace.git"
   },
-  "author": "",
+  "author": "Del Zenero Alessandro,Sorrentino Carlo e Sorrentino Francesco",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Frasor2002/Ricerca-Parcheggio-Efficace/issues"
@@ -30,7 +34,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^5.13.22"
+    "mongoose": "^5.13.22",
+    "supertest": "^7.0.0"
   }
 }

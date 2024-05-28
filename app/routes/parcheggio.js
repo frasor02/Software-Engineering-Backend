@@ -9,6 +9,9 @@ const controllerParcheggio = require('../controllers/parcheggio');
 //Chiamata GET per visualizzare parcheggi vicini alla meta inserita
 router.get('/ricerca', controllerParcheggio.parcheggio_ricerca);
 
+// Chiamata GET per visualizzare le prenotazioni dato un parcheggio
+router.get("/:parcheggioId/prenotazione", checkAuth,checkAdmin, controllerParcheggio.parcheggio_get_prenotazioni);
+
 //Chiamata GET per visualizzare un parcheggio
 router.get('/:parcheggioId', controllerParcheggio.parcheggio_get);
 
@@ -23,5 +26,7 @@ router.patch('/:parcheggioId', checkAuth, checkAdmin, controllerParcheggio.parch
 
 // Chiamata DELETE per eliminare un parcheggio
 router.delete('/:parcheggioId',checkAuth, checkAdmin, controllerParcheggio.parcheggio_delete);
+
+
 
 module.exports = router;

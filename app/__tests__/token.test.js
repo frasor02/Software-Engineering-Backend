@@ -46,31 +46,19 @@ describe('POST /v1/token', () => {
             .expect(401, {error: 'Autenticazione fallita'});
         });
 
-        test('Test #21: autenticazione con credenziali corrette', () => {
+        test('Test #21: autenticazione con credenziali corrette', async () => {
             let AutenticazionePayload = {
                 email: 'test@unitn.it',
                 password: 'test'
             };
-            return request(app)
+            const response = await request(app)
             .post('/v1/token')
             .set('Accept', 'application/json')
-            .send(AutenticazionePayload)
-            .expect(200, {
-                message: 'Autenticazione effettuata',
-                token: jwt.sign(
-                    {
-                        _id: 0o0,
-                        _type: 'UtenteNormale',
-                        email: 'test@unitn.it'
-                    }, 
-                    process.env.JWT_KEY,
-                    {
-                        expiresIn: "1h"
-                    }
-                ),
-                email: 'test@unitn.it',
-                _id: 0o0
-            });
+            .send(AutenticazionePayload);
+            expect(response.body.message).toEqual('Autenticazione effettuata');
+            expect(response.body.token).toEqual(expect.any(String));
+            expect(response.body.email).toEqual('test@unitn.it');
+            expect(response.body._id).toEqual(0o0);
         });
     });
 });

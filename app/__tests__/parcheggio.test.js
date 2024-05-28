@@ -288,3 +288,32 @@ describe("GET /v1/parcheggio/:parcheggioId", () => {
         .expect(200, {"res": {}});
     });
 });
+
+describe('GET /v1/parcheggio/:parcheggioId/prenotazione', () => {
+    // Creazione token valido
+    var payload = {
+        _id: mongoose.Schema.Types.ObjectId,
+        _type: "UtenteAdmin",
+        email: "admin@test.com"
+    }
+    var options = {
+        expiresIn: "1h" // scadenza in un ora
+    }
+    var token = jwt.sign(payload,process.env.JWT_KEY, options);
+    beforeAll(() => {
+        const Prenotazione = require('../models/prenotazione');
+        Prenotazione.find = jest.fn()
+        .mockResolvedValue([]);
+    });
+
+    test('Test #24: visualizzazione di prenotazioni di un parcheggio non vigilato', () => {
+        return request(app)
+        .get('/v1/parcheggio/:' + new mongoose.Types.ObjectId() + '/prenotazione')
+        .set('Authorization', 'Bearer ' + token)
+        .send()
+        .expect(200, {
+            count: 0,
+            prenotazioni: []
+        });
+    });
+});

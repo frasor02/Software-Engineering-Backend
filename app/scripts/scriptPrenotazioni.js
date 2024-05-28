@@ -55,7 +55,7 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
             newPosti.postiOccDisabili += 1 ;
             newPosti.postiOcc += 1;
             const updateOps = {"postiOccupati": newPosti};
-            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
             break;
         }
         case "gravidanza":{
@@ -63,7 +63,7 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
             newPosti.postiOccGravidanza += 1 ;
             newPosti.postiOcc += 1;
             const updateOps = {"postiOccupati": newPosti};
-            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
             break;
         }
         case "normale":{
@@ -73,7 +73,7 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
                     newPosti.postiOccAuto += 1 ;
                     newPosti.postiOcc += 1;
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
                 case "moto":{
@@ -81,7 +81,7 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
                     newPosti.postiOccMoto += 1 ;
                     newPosti.postiOcc += 1;
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
                 case "furgone":{
@@ -89,7 +89,7 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
                     newPosti.postiOccFurgone += 1 ;
                     newPosti.postiOcc += 1;
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
                 case "bus":{
@@ -97,7 +97,7 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
                     newPosti.postiOccBus += 1 ;
                     newPosti.postiOcc += 1;
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
             }
@@ -118,7 +118,7 @@ exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
                 newPosti.postiOcc -= 1 ;
             }
             const updateOps = {"postiOccupati": newPosti};
-            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
             break;
         }
         case "gravidanza":{
@@ -130,7 +130,7 @@ exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
                 newPosti.postiOcc -= 1 ;
             }
             const updateOps = {"postiOccupati": newPosti};
-            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+            ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
             break;
         }
         case "normale":{
@@ -144,7 +144,7 @@ exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
                         newPosti.postiOcc -= 1 ;
                     }
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
                 case "moto":{
@@ -156,7 +156,7 @@ exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
                         newPosti.postiOcc -= 1 ;
                     }
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
                 case "furgone":{
@@ -168,7 +168,7 @@ exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
                         newPosti.postiOcc -= 1 ;
                     }
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
                 case "bus":{
@@ -180,7 +180,7 @@ exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
                         newPosti.postiOcc -= 1 ;
                     }
                     const updateOps = {"postiOccupati": newPosti};
-                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).exec().then().catch(err => { throw(err); });
+                    ParcheggioVigilato.findByIdAndUpdate(parcheggio._id, updateOps).then().catch(err => { throw(err); });
                     break;
                 }
             }

@@ -5,6 +5,7 @@ const ParcheggioPay = require('../models/parcheggioPay');
 const ParcheggioVigilato = require('../models/parcheggioVigilato');
 const Prenotazione = require('../models/prenotazione');
 const Feedback = require('../models/feedback');
+const feedback = require('../models/feedback');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
@@ -518,7 +519,7 @@ exports.parcheggio_get_feedback = (req, res) => {
     .then(docs => {
         res.status(200).json({
             count: docs.length,
-            prenotazioni: docs.map(doc =>{
+            feedback: docs.map(doc =>{
                 return {
                     _id: doc._id,
                     parcheggioId: doc.parcheggioId,

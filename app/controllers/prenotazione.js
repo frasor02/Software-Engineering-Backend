@@ -21,10 +21,10 @@ exports.prenotazione_post = (req, res) =>{
             error: "Account admin cerca di prenotare"
         });
     }
-    ParcheggioVigilato.find({_id : req.body.parcheggioId}).exec()
+    ParcheggioVigilato.find({_id : req.body.parcheggioId})
     .then(parcheggio =>{
         if(parcheggio.length == 1){
-            Utente.find({email : utenteToken.email}).exec()
+            Utente.find({email : utenteToken.email})
             .then( utente => {
                 if(utente.length > 0){
                     try{
@@ -64,6 +64,7 @@ exports.prenotazione_post = (req, res) =>{
                                 });
                                 return; // Per impedire di continuare l'esecuzione che interromperebbe il server
                             }
+                            console.log(result)
                             res.status(201).json({
                                 message: "Prenotazione creata",
                                 createdPrenotazione: {
@@ -73,7 +74,9 @@ exports.prenotazione_post = (req, res) =>{
                                     dataPrenotazione : result.dataPrenotazione,
                                     tipoPosto: result.tipoPosto,
                                     veicolo: result.veicolo
-                                }})}
+                                }
+                            });
+                        }
                     ).catch(err => {
                         console.log(err);
                         res.status(500).json({ // Errore database non ha salvato il parcheggio

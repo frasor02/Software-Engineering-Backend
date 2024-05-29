@@ -216,7 +216,7 @@ paths:
           description: Indica la preferenza tra parcheggio coperto o meno
           required: false
           schema:
-            type: boolean # o number?
+            type: boolean
         - name: utente
           in: query
           description: Indica la preferenza sulla presenza di posti per disabili o posti per donne in gravidanza
@@ -424,7 +424,7 @@ paths:
       operationId: visualizzaFeedbackParcheggio
       tags:
         - feedback
-        - parcheggi #????
+        - parcheggi 
       parameters:
         - $ref: "#/components/parameters/parcheggioId"
       responses:

@@ -4,6 +4,8 @@ const ParcheggioFree = require('../models/parcheggioFree');
 const ParcheggioPay = require('../models/parcheggioPay');
 const ParcheggioVigilato = require('../models/parcheggioVigilato');
 const Prenotazione = require('../models/prenotazione');
+const Feedback = require('../models/feedback');
+const feedback = require('../models/feedback');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
@@ -487,6 +489,43 @@ exports.parcheggio_get_prenotazioni = (req, res) => {
                     tipoPosto : doc.tipoPosto,
                     veicolo : doc.veicolo,
                     isArrived : doc.isArrived
+                }
+            })})
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({ // Find fallita
+            error: err
+        });
+    });
+};
+
+
+exports.parcheggio_get_feedback = (req, res) => {
+    let id;
+    try {
+        id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            throw new Error("Wrong id")
+        }
+    } catch(err){
+        res.status(400).json({ // formato id del parcheggio non valido
+            error: err.message
+        });
+        return; // Evita l'errore "Cannot set headers after they are sent to the client" 
+    };
+    /* Se l'id fosse di un parcheggio non vigilato non ritorniamo nulla*/
+    Feedback.find({parcheggioId: id})
+    .then(docs => {
+        res.status(200).json({
+            count: docs.length,
+            feedback: docs.map(doc =>{
+                return {
+                    _id: doc._id,
+                    parcheggioId: doc.parcheggioId,
+                    utenteMail : doc.utenteMail,
+                    rating: doc.rating,
+                    testoFeedback: doc.testoFeedback
                 }
             })})
     })

@@ -401,6 +401,39 @@ paths:
           $ref: "#/components/responses/GeneralError"
         '5XX':
           $ref: "#/components/responses/GeneralError"
+    get:
+      summary: Visualizza feedback di un utente
+      description: L'utente autenticato può visualizzare i propri feedback
+      operationId: visualizzaFeedbackUtente
+      tags:
+        - feedback
+      security:
+        - BearerAuth: [utente]
+      responses:
+        '200':
+          $ref: "#/components/responses/FeedbackGetRes"
+        '4XX':
+          $ref: "#/components/responses/GeneralError"
+        '5XX':
+          $ref: "#/components/responses/GeneralError"
+  
+  /v1/parcheggio/:{parcheggioId}/feedback:
+    get:
+      summary: Visualizza feedback di un parcheggio
+      description: L'utente può visualizzare i feedback di un parcheggio
+      operationId: visualizzaFeedbackParcheggio
+      tags:
+        - feedback
+        - parcheggi #????
+      parameters:
+        - $ref: "#/components/parameters/parcheggioId"
+      responses:
+        '200':
+          $ref: "#/components/responses/FeedbackGetRes"
+        '4XX':
+          $ref: "#/components/responses/GeneralError"
+        '5XX':
+          $ref: "#/components/responses/GeneralError"
 
       
 
@@ -1086,7 +1119,40 @@ components:
                 testoFeedback:
                   type: string
                   maxLength: 300
-    
+    FeedbackGetRes:
+      description: Risponde con una lista di feedback e il numero di feedback presenti nella lista
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - count
+              - feedback
+            properties:
+              count: 
+                type: integer
+              feedback:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - _id
+                    - parcheggioId
+                    - utenteMail
+                    - rating
+                    - testoFeedback
+                  properties:
+                    _id: 
+                      type: string
+                    parcheggioId:
+                      type: string
+                    utenteMail:
+                      type: string
+                    rating:
+                      type: integer
+                    testoFeedback:
+                      type: string
+                      maxLength: 300
               
   links:
     GetParcheggioById:

@@ -424,7 +424,6 @@ paths:
       operationId: visualizzaFeedbackParcheggio
       tags:
         - feedback
-        - parcheggi 
       parameters:
         - $ref: "#/components/parameters/parcheggioId"
       responses:

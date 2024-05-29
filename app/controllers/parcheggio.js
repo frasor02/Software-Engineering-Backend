@@ -5,7 +5,6 @@ const ParcheggioPay = require('../models/parcheggioPay');
 const ParcheggioVigilato = require('../models/parcheggioVigilato');
 const Prenotazione = require('../models/prenotazione');
 const Feedback = require('../models/feedback');
-const feedback = require('../models/feedback');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
@@ -69,7 +68,13 @@ exports.parcheggio_ricerca = (req, res) => {
     let long = parseFloat(req.query.long);
     let isCoperto = req.query.isCoperto;
     let utente = req.query.utente;
+    if(utente === undefined){
+        utente = "default";
+    }
     let veicolo = req.query.veicolo;
+    if(veicolo === undefined){
+        veicolo = "default";
+    }
     // Controllo dell'input
     if(lat < 46.036073449255646 || lat > 46.17933757653747){
         res.status(400).json({error: "lat out of map bounds"});
@@ -85,13 +90,13 @@ exports.parcheggio_ricerca = (req, res) => {
         return;
     }
     
-    validUtente = ["disabile", "gravidanza", undefined];
+    validUtente = ["disabile", "gravidanza", "default"];
     
     if(!validUtente.includes(utente)){
         res.status(400).json({error: "utente not valid"})
         return;
     }
-    validVeicolo = ["auto","moto","furgone","bus", undefined];
+    validVeicolo = ["auto","moto","furgone","bus", "default"];
     if(!validVeicolo.includes(veicolo)){
         res.status(400).json({error: "veicolo not valid"})
         return;

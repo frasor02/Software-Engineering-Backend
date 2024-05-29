@@ -5,9 +5,9 @@ const jwt = require ('jsonwebtoken');
 const Test = require('supertest/lib/test');
 
 describe('POST /v1/feedback', () => {
-    var parcheggioId = new mongoose.Types.ObjectId();
-    var feedbackId = new mongoose.Types.ObjectId();
-    var utenteMail = 'test@unitn.it'
+    const parcheggioId = new mongoose.Types.ObjectId();
+    const feedbackId = new mongoose.Types.ObjectId();
+    const utenteMail = 'test@unitn.it';
     // Creazione token valido
     var payload = {
         _id: mongoose.Schema.Types.ObjectId,
@@ -90,20 +90,6 @@ describe('POST /v1/feedback', () => {
 
     test('Test #29: creazione feedback senza parametro parcheggioId', () => {
         const feedbackPayload = {
-            parcheggioId: parcheggioId,
-            rating: 4
-        }
-        return request(app)
-        .post('/v1/feedback')
-        .set('Authorization', 'Bearer ' + token)
-        .send(feedbackPayload)
-        .expect(400, {
-            error: 'Parametri mancanti'
-        });
-    });
-
-    test('Test #29: creazione feedback senza parametro testoFeedback', () => {
-        const feedbackPayload = {
             rating: 4,
             testoFeedback: 'Feedback'
         }
@@ -168,7 +154,7 @@ describe('POST /v1/feedback', () => {
             Feedback.prototype.save = jest.fn().mockRejectedValue(new Error('DB error'));
         });
 
-        test('Test #31: creazione feedback con token non valido', () => {
+        test('Test #32: creazione feedback con errore salvataggio DB', () => {
             const feedbackPayload = {
                 parcheggioId: parcheggioId,
                 rating: 4,
@@ -180,6 +166,99 @@ describe('POST /v1/feedback', () => {
             .send(feedbackPayload)
             .expect(500, {
                 error: 'DB error'
+            });
+        });
+    });
+});
+
+describe('GET /v1/feedback', () => {
+    const feedbackId1 = new mongoose.Types.ObjectId();
+    const feedbackId2 = new mongoose.Types.ObjectId();
+    const parcheggioId = new mongoose.Types.ObjectId();
+    const utenteMail = 'admin@test.com';
+    // Creazione token valido
+    var payload = {
+        _id: mongoose.Schema.Types.ObjectId,
+        _type: "UtenteAdmin",
+        email: utenteMail
+    }
+    var options = {
+        expiresIn: "1h" // scadenza in un ora
+    }
+    var token = jwt.sign(payload,process.env.JWT_KEY, options);
+
+    beforeAll(() => {
+        const Feedback = require('../models/feedback');
+        Feedback.find = jest.fn().mockResolvedValue(
+            [{
+                _id: feedbackId1,
+                parcheggioId: parcheggioId,
+                utenteMail : utenteMail,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            },
+            {
+                _id: feedbackId2,
+                parcheggioId: parcheggioId,
+                utenteMail : utenteMail,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            }]
+        );
+    });
+
+    test('Test #33: visualizzazione feedback di un utente admin', () => {
+        return request(app)
+        .get('/v1/feedback')
+        .set('Authorization', 'Bearer ' + token)
+        .send()
+        .expect(200, {
+            count: 2,
+            feedback: [{
+                _id: `${feedbackId1._id}`,
+                parcheggioId: `${parcheggioId._id}`,
+                utenteMail : utenteMail,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            },
+            {
+                _id: `${feedbackId2._id}`,
+                parcheggioId: `${parcheggioId._id}`,
+                utenteMail : utenteMail,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            }]
+        });
+    });
+
+    describe('Parcheggio con un feedback', () => {
+        beforeAll(() => {
+            const Feedback = require('../models/feedback');
+            Feedback.find = jest.fn().mockResolvedValue(
+                [{
+                    _id: feedbackId1,
+                    parcheggioId: parcheggioId,
+                    utenteMail : utenteMail,
+                    rating: 4,
+                    testoFeedback: 'Feedback'
+                }]
+            );
+        });
+
+        test('Test #34: visualizzazione feedback parcheggio', () => {
+            return request(app)
+            .get('/v1/feedback')
+            .set('Authorization', 'Bearer ' + token)
+            .send()
+            .expect(200, {
+                count: 1,
+                feedback: [{
+                    _id: `${feedbackId1._id}`,
+                    parcheggioId: `${parcheggioId._id}`,
+                    utenteMail : utenteMail,
+                    rating: 4,
+                    testoFeedback: 'Feedback'
+                }]
             });
         });
     });

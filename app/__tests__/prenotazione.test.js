@@ -3,11 +3,6 @@ const app = require('../app');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
-// beforeAll(() => {
-//     const Prenotazione = require('../models/prenotazione');
-//     Prenotazione.find = jest.fn().mockResolvedValueOnce([]);
-// });
-
 describe('POST /v1/prenotazione', () => {
     // Creazione token valido
     var payload = {

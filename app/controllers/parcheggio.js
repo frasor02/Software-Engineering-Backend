@@ -66,7 +66,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
         err => {
             console.log(err);
             res.status(500).json({ // Errore nella ricerca
-                error: err
+                error: err.message
             })
         }
     )
@@ -74,7 +74,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
 
 }
 
-//funzione che implementa la chiamata get /parcheggio/ricerca
+//funzione che implementa la chiamata get /v1/parcheggio/ricerca
 exports.parcheggio_ricerca = (req, res) => {
     let lat = parseFloat(req.query.lat);
     let long = parseFloat(req.query.long);
@@ -225,7 +225,7 @@ exports.parcheggio_get = (req, res) => {
         err => {
             console.log(err);
             res.status(500).json({
-                error: err
+                error: err.message
             })
         }
     )
@@ -234,8 +234,7 @@ exports.parcheggio_get = (req, res) => {
 // Funzione che implementa la chiamata GET a /v1/parcheggio
 exports.parcheggio_get_all = (req, res) => {
     Parcheggio.find({})
-    .select("_id _type nome")
-    .exec()
+    // .select("_id _type nome")
     .then(docs => {
         const response = {
             count: docs.length,
@@ -251,12 +250,13 @@ exports.parcheggio_get_all = (req, res) => {
                 }
             })
         };
+        console.log(response)
         res.status(200).json(response);
     })
     .catch( err => {
         console.log(err);
         res.status(500).json({  // Errore nella ricerca
-            error: err
+            error: err.message
         })
     });
 };
@@ -511,7 +511,7 @@ exports.parcheggio_get_prenotazioni = (req, res) => {
     .catch(err => {
         console.log(err);
         res.status(500).json({ // Find fallita
-            error: err
+            error: err.message
         });
     });
 };
@@ -548,7 +548,7 @@ exports.parcheggio_get_feedback = (req, res) => {
     .catch(err => {
         console.log(err);
         res.status(500).json({ // Find fallita
-            error: err
+            error: err.message
         });
     });
 };

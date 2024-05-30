@@ -102,7 +102,7 @@ exports.registrazione = (req, res) => {
     }).catch(err => {
         console.log(err);
         return res.status(500).json({ // Errore ricerca utente
-            error: err
+            error: err.message
         });
     });
 };

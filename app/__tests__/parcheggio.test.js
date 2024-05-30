@@ -267,6 +267,68 @@ describe("GET /v1/parcheggio/ricerca", () => {
     });
 });
 
+describe('GET /v1/parcheggio', () => {
+    const pId1 = new mongoose.Types.ObjectId();
+    const pId2 = new mongoose.Types.ObjectId();
+    const pId3 = new mongoose.Types.ObjectId();
+    beforeAll(() => {
+        const Parcheggio = require('../models/parcheggio');
+        Parcheggio.find = jest.fn().mockResolvedValue( 
+            [{
+                _id: pId1,
+                _type: 'ParcheggioFree',
+                nome: 'p1'
+            },
+            {
+                _id: pId2,
+                _type: 'ParcheggioPay',
+                nome: 'p2'
+            },
+            {
+                _id: pId3,
+                _type: 'ParcheggioVigilato',
+                nome: 'p3'
+            }]
+        );
+    });
+
+    test('Test #39: visualizzazione di tutti i parcheggi', () => {
+    return request(app)
+        .get('/v1/parcheggio')
+        .send()
+        .expect(200, {
+            count: 3,
+            parcheggi: [{
+                _id: `${pId1._id}`,
+                _type: 'ParcheggioFree',
+                nome: 'p1',
+                request: {
+                    type: "GET",
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + pId1
+                }
+            },
+            {
+                _id: `${pId2._id}`,
+                _type: 'ParcheggioPay',
+                nome: 'p2',
+                request: {
+                    type: "GET",
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + pId2
+                }
+            },
+            {
+                _id: `${pId3._id}`,
+                _type: 'ParcheggioVigilato',
+                nome: 'p3',
+                request: {
+                    type: "GET",
+                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + pId3
+                }
+            }]
+        });       
+    });
+});
+
 describe("GET /v1/parcheggio/:parcheggioId", () => {
     beforeAll( () => {
         const Parcheggio = require('../models/parcheggio');

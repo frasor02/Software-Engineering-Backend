@@ -24,8 +24,8 @@ exports.getFeedback = (req, res) => {
     })
     .catch(err => {
         console.log(err);
-        res.status(500).json({ // Find fallita
-            error: err
+        return res.status(500).json({ // Find fallita
+            error: err.message
         });
     });
 
@@ -96,7 +96,7 @@ exports.postFeedback = (req, res) => {
         err => {
             console.log(err);
             res.status(500).json({ // Id parcheggio non corretto, find non eseguita
-                error: err
+                error: err.message
             });
         }
     );

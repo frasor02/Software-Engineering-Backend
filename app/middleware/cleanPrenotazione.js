@@ -42,7 +42,7 @@ function cleanExpired(res){
                                 .catch((err) => {
                                     console.log(err);
                                     return res.status(500).json({ // Errore nella find
-                                        error: err
+                                        error: err.message
                                 })});
                             }
                         }
@@ -51,7 +51,7 @@ function cleanExpired(res){
                 ).catch( (err) => {
                     console.log(err);
                     return res.status(500).json({ // Errore nella delete
-                        error: err
+                        error: err.message
                     });
                 });
             }
@@ -59,7 +59,7 @@ function cleanExpired(res){
     ).catch( (err) => {
         console.log(err);
         return res.status(500).json({ // Errore nella find
-            error: err
+            error: err.message
         });
     });
     

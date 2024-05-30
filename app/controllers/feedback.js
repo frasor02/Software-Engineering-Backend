@@ -4,7 +4,7 @@ const Parcheggio = require('../models/parcheggio');
 const Utente = require('../models/utente');
 const jwt = require('jsonwebtoken');
 
-// Funzione che fa la get di un feedback
+// Funzione che fa la get dei feedback di un utente autenticato
 exports.getFeedback = (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     const utenteToken = jwt.decode(token);
@@ -24,14 +24,14 @@ exports.getFeedback = (req, res) => {
     })
     .catch(err => {
         console.log(err);
-        res.status(500).json({ // Find fallita
-            error: err
+        return res.status(500).json({ // Find fallita
+            error: err.message
         });
     });
 
 };
 
-// Funzione che fa la post di un feedback
+// Funzione che fa la post di un feedback su un parcheggio
 exports.postFeedback = (req, res) => {
     if (!req.body.parcheggioId || !req.body.rating || !req.body.testoFeedback){
         return res.status(400).json({
@@ -92,12 +92,11 @@ exports.postFeedback = (req, res) => {
         }
 
     }
-
     ).catch(
         err => {
             console.log(err);
             res.status(500).json({ // Id parcheggio non corretto, find non eseguita
-                error: err
+                error: err.message
             });
         }
     );

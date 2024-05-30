@@ -151,7 +151,7 @@ describe('POST /v1/feedback', () => {
             Utente.find = jest.fn().mockResolvedValue([{
                 email: utenteMail
             }]);
-            Feedback.prototype.save = jest.fn().mockRejectedValue(new Error('DB error'));
+            Feedback.prototype.save = jest.fn().mockRejectedValue(new Error('DB save error'));
         });
 
         test('Test #32: creazione feedback con errore salvataggio DB', () => {
@@ -165,7 +165,81 @@ describe('POST /v1/feedback', () => {
             .set('Authorization', 'Bearer ' + token)
             .send(feedbackPayload)
             .expect(500, {
-                error: 'DB error'
+                error: 'DB save error'
+            });
+        });
+    });
+
+    describe('Nessun utente trovato con email del token', () => {
+        beforeAll(() => {
+            const Parcheggio = require('../models/parcheggio');
+            const Utente = require('../models/utente');
+            Parcheggio.find = jest.fn().mockResolvedValue([{
+                _id: parcheggioId
+            }]);
+            Utente.find = jest.fn().mockResolvedValue([]);
+        });
+
+        test('Test #36: creazione feedback con email non esistente nel DB', () => {
+            const feedbackPayload = {
+                parcheggioId: parcheggioId,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            }
+            return request(app)
+            .post('/v1/feedback')
+            .set('Authorization', 'Bearer ' + token)
+            .send(feedbackPayload)
+            .expect(400, {
+                error: 'Email not found'
+            });
+        });
+    });
+
+    describe('Errore DB nella find utente', () => {
+        beforeAll(() => {
+            const Parcheggio = require('../models/parcheggio');
+            const Utente = require('../models/utente');
+            Parcheggio.find = jest.fn().mockResolvedValue([{
+                _id: parcheggioId
+            }]);
+            Utente.find = jest.fn().mockRejectedValue(new Error('DB find error'));
+        });
+
+        test('Test #37: creazione feedback con errore del DB per la find utente', () => {
+            const feedbackPayload = {
+                parcheggioId: parcheggioId,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            }
+            return request(app)
+            .post('/v1/feedback')
+            .set('Authorization', 'Bearer ' + token)
+            .send(feedbackPayload)
+            .expect(500, {
+                error: 'DB find error'
+            });
+        });
+    });
+
+    describe('Errore DB nella find parcheggio', () => {
+        beforeAll(() => {
+            const Parcheggio = require('../models/parcheggio');
+            Parcheggio.find = jest.fn().mockRejectedValue(new Error('DB find error'));
+        });
+
+        test('Test #38: creazione feedback con errore del DB per la find utente', () => {
+            const feedbackPayload = {
+                parcheggioId: parcheggioId,
+                rating: 4,
+                testoFeedback: 'Feedback'
+            }
+            return request(app)
+            .post('/v1/feedback')
+            .set('Authorization', 'Bearer ' + token)
+            .send(feedbackPayload)
+            .expect(500, {
+                error: 'DB find error'
             });
         });
     });
@@ -260,6 +334,21 @@ describe('GET /v1/feedback', () => {
                     testoFeedback: 'Feedback'
                 }]
             });
+        });
+    });
+
+    describe('Errore nella ricerca dei feedback', () => {
+        beforeAll(() => {
+            const Feedback = require('../models/feedback');
+            Feedback.find = jest.fn().mockRejectedValue(new Error('DB find error'));
+        });
+
+        test('Test #35: visualizzazione feedback utente con errore find DB', () => {
+            return request(app)
+            .get('/v1/feedback')
+            .set('Authorization', 'Bearer ' + token)
+            .send()
+            .expect(500, {error: 'DB find error'});
         });
     });
 });

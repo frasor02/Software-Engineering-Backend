@@ -52,7 +52,7 @@ exports.registrazione = (req, res) => {
             bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if (err) {
                     return res.status(500).json({
-                        error: err
+                        error: err // Errore hashing della password
                     });
                 } else {
                     // Switch per utenteAdmin e utenteNormale
@@ -92,8 +92,7 @@ exports.registrazione = (req, res) => {
                     })
                     .catch(err => {
                         console.log(err);
-                        return res.status(500).json({
-                            message: "Saving error",
+                        return res.status(500).json({ // Errore salvataggio
                             error: err.message
                         });
                     });
@@ -102,8 +101,8 @@ exports.registrazione = (req, res) => {
         }
     }).catch(err => {
         console.log(err);
-        return res.status(500).json({
-            error: err
+        return res.status(500).json({ // Errore ricerca utente
+            error: err.message
         });
     });
 };

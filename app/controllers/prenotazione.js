@@ -32,7 +32,7 @@ exports.prenotazione_post = (req, res) =>{
                     } catch(err){
                         console.log(err);
                         res.status(400).json({ // Non ci sono i posti
-                            error: err
+                            error: err.message
                         });
                         return; // Per impedire di continuare l'esecuzione che interromperebbe il server
                     }
@@ -50,7 +50,7 @@ exports.prenotazione_post = (req, res) =>{
                     }catch(err){
                         console.log(err);
                         res.status(400).json({ // Input errato
-                            error: err
+                            error: err.message
                         });
                     }
                     nuovaPrenotazione.save().then(
@@ -60,7 +60,7 @@ exports.prenotazione_post = (req, res) =>{
                             }catch(err){
                                 console.log(err);
                                 res.status(500).json({ // Non si è riusciti ad aggiornare
-                                    error: err
+                                    error: err.message
                                 });
                                 return; // Per impedire di continuare l'esecuzione che interromperebbe il server
                             }
@@ -80,7 +80,7 @@ exports.prenotazione_post = (req, res) =>{
                     ).catch(err => {
                         console.log(err);
                         res.status(500).json({ // Errore database non ha salvato il parcheggio
-                            error: err
+                            error: err.message
                         });
                     });
                 }else{
@@ -92,7 +92,7 @@ exports.prenotazione_post = (req, res) =>{
             }).catch(err => {
                 console.log(err);
                 res.status(500).json({ // L'email utente non è corretta, find non eseguita
-                    error: err
+                    error: err.message
                 });
             })
         }else{
@@ -105,7 +105,7 @@ exports.prenotazione_post = (req, res) =>{
         err => {
             console.log(err);
             res.status(500).json({ // Id parcheggio non corretto, find non eseguita
-                error: err
+                error: err.message
             });
         }
     );
@@ -136,7 +136,7 @@ exports.prenotazione_get= (req,res) => {
     .catch(err => {
         console.log(err);
         res.status(500).json({ // Find fallita
-            error: err
+            error: err.message
         });
     });
 };
@@ -201,13 +201,13 @@ exports.prenotazione_delete= (req,res) => {
                     .catch(err => {
                         console.log(err);
                         res.status(500).json({ // Find fallita
-                            error: err
+                            error: err.message
                         });
                     });
                 }catch(err){
                     console.log(err);
                     res.status(500).json({ // Non ha modificato il parcheggio
-                        error: err
+                        error: err.message
                     });
                     return; // Per impedire di continuare l'esecuzione che interromperebbe il server
                 };
@@ -216,14 +216,14 @@ exports.prenotazione_delete= (req,res) => {
             .catch(err => {
                 console.log(err);
                 res.status(500).json({ // findByIdAndDelete fallita
-                    error: err
+                    error: err.message
                 });
             });
         })
         .catch(err => {
             console.log(err);
             res.status(500).json({ // Find fallita
-                error: err
+                error: err.message
             });
         })
     } else{ 
@@ -251,13 +251,13 @@ exports.prenotazione_delete= (req,res) => {
                 .catch(err => {
                     console.log(err);
                     res.status(500).json({ // Find fallita
-                        error: err
+                        error: err.message
                     });
                 });
             }catch(err){
                 console.log(err);
                 res.status(500).json({ // Non ha modificato il parcheggio
-                    error: err
+                    error: err.message
                 });
                 return; // Per impedire di continuare l'esecuzione che interromperebbe il server
             };
@@ -266,7 +266,7 @@ exports.prenotazione_delete= (req,res) => {
         .catch(err => {
             console.log(err);
             res.status(500).json({ // findByIdAndDelete fallita
-                error: err
+                error: err.message
             });
         });
     }

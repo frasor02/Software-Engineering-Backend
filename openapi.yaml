@@ -214,9 +214,9 @@ paths:
         - name: isCoperto
           in: query
           description: Indica la preferenza tra parcheggio coperto o meno
-          required: false
+          required: true
           schema:
-            type: boolean # o number?
+            type: boolean
         - name: utente
           in: query
           description: Indica la preferenza sulla presenza di posti per disabili o posti per donne in gravidanza
@@ -424,7 +424,6 @@ paths:
       operationId: visualizzaFeedbackParcheggio
       tags:
         - feedback
-        - parcheggi #????
       parameters:
         - $ref: "#/components/parameters/parcheggioId"
       responses:
@@ -807,6 +806,9 @@ components:
           type: string
     VeicoloSchema:
       type: object
+      required:
+        - tipoVeicolo
+        - targa
       properties:
         tipoVeicolo:
           type: string
@@ -819,6 +821,10 @@ components:
           type: string
     UtenteAdminSchemaReg:
       type: object
+      required:
+        - _type
+        - email
+        - password
       properties:
         _type: 
           type: string
@@ -830,6 +836,12 @@ components:
           type: string
     UtenteNormaleSchemaReg:
       type: object
+      required:
+        - _type
+        - email
+        - password
+        - metPagamento
+        - veicoli
       properties:
         _type: 
           type: string
@@ -851,6 +863,9 @@ components:
             $ref: "#/components/schemas/VeicoloSchema" 
     UtenteSchemaLog:
       type: object
+      required:
+        - email
+        - password
       properties:
         email:
           type: string
@@ -882,11 +897,17 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - message
+              - modifiedPrenotazione
             properties:
               message:
                 type: string
               modifiedPrenotazione:
                 type: object
+                required:
+                  - _id
+                  - isArrived
                 properties:
                   _id:
                     type: string
@@ -901,11 +922,21 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - message
+              - deletedPrenotazione
             properties:
               message:
                 type: string
               deletedPrenotazione:
                 type: object
+                required:
+                  - _id
+                  - parcheggioId
+                  - utenteMail
+                  - dataPrenotazione
+                  - tipoPosto
+                  - veicolo
                 properties:
                   _id:
                     type: string
@@ -919,6 +950,9 @@ components:
                     type: string
                   veicolo:
                     type: object
+                    required:
+                      - tipoVeicolo
+                      - targa
                     properties:
                       tipoVeicolo:
                         type: string
@@ -930,31 +964,47 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - count
+              - prenotazioni
             properties:
               count:
                 type: string
               prenotazioni:
-                type: object
-                properties:
-                  _id:
-                    type: string
-                  parcheggioId: 
-                    type: string
-                  utenteMail:
-                    type: string
-                  dataPrenotazione:
-                    type: string
-                  tipoPosto:
-                    type: string
-                  veicolo:
-                    type: object
-                    properties:
-                      tipoVeicolo:
-                        type: string
-                      targa:
-                        type: string
-                  isArrived:
-                    type: boolean
+                type: array
+                items:
+                  type: object
+                  required:
+                    - _id
+                    - parcheggioId
+                    - utenteMail
+                    - dataPrenotazione
+                    - tipoPosto
+                    - veicolo
+                    - isArrived
+                  properties:
+                    _id:
+                      type: string
+                    parcheggioId: 
+                      type: string
+                    utenteMail:
+                      type: string
+                    dataPrenotazione:
+                      type: string
+                    tipoPosto:
+                      type: string
+                    veicolo:
+                      type: object
+                      required:
+                        - tipoVeicolo
+                        - targa
+                      properties:
+                        tipoVeicolo:
+                          type: string
+                        targa:
+                          type: string
+                    isArrived:
+                      type: boolean
                   
     PostPrenotazioneParcheggio:
       description: ""
@@ -962,11 +1012,21 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - message
+              - createdPrenotazione
             properties:
               message:
                 type: string
               createdPrenotazione:
                 type: object
+                required:
+                  - _id
+                  - parcheggioId
+                  - utenteMail
+                  - dataPrenotazione
+                  - tipoPosto
+                  - veicolo
                 properties:
                   _id:
                     type: string
@@ -980,6 +1040,9 @@ components:
                     type: string
                   veicolo:
                     type: object
+                    required:
+                      - tipoVeicolo
+                      - targa
                     properties:
                       tipoVeicolo:
                         type: string
@@ -1051,11 +1114,17 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - message
+              - utenteCreato
             properties:
               message:
                 type: string
               utenteCreato:
                 type: object
+                required:
+                  - _type
+                  - email
                 properties:
                   _type:
                     type: string
@@ -1070,6 +1139,12 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - message
+              - token
+              - email
+              - _id
+              - request
             properties:
               message:
                 type: string
@@ -1081,6 +1156,9 @@ components:
                 type: string
               request:
                 type: object
+                required:
+                  - type
+                  - url
                 properties:
                   type:
                     type: string

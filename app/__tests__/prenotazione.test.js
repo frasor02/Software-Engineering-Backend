@@ -3,12 +3,16 @@ const app = require('../app');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
+const utenteNormaleMail = 'test@unitn.it';
+const parcheggioId = new mongoose.Types.ObjectId();
+const prenotazioneId = new mongoose.Types.ObjectId();
+
 describe('POST /v1/prenotazione', () => {
     // Creazione token valido
     var payload = {
         _id: mongoose.Schema.Types.ObjectId,
         _type: "UtenteNormale",
-        email: "test@unitn.it"
+        email: utenteNormaleMail
     }
     var options = {
         expiresIn: "1h" // scadenza in un ora
@@ -20,7 +24,7 @@ describe('POST /v1/prenotazione', () => {
         const Prenotazione = require('../models/prenotazione');
         const Utente = require('../models/utente');
         ParcheggioVigilato.find = jest.fn().mockResolvedValue([{
-            _id: 0o0,
+            _id: parcheggioId,
             numPosti: 100,
             numPostiDisabili: 10,
             numPostiGravidanza: 10,
@@ -40,16 +44,16 @@ describe('POST /v1/prenotazione', () => {
         }]);
         ParcheggioVigilato.findByIdAndUpdate = jest.fn().mockResolvedValue();
         Utente.find = jest.fn().mockResolvedValue([{
-            email: 'test@unitn.it',
+            email: utenteNormaleMail,
             veicoli: [{
                 tipoVeicolo: 'auto',
                 targa: 'AA000AA'
             }]
         }]);
         Prenotazione.prototype.save = jest.fn().mockResolvedValue({
-            _id : 0o0,
-            parcheggioId : 0o0,
-            utenteMail : 'test@unitn.it',
+            _id : prenotazioneId,
+            parcheggioId : parcheggioId,
+            utenteMail : utenteNormaleMail,
             dataPrenotazione : new Date(),
             tipoPosto: 'Normale',
             veicolo: {
@@ -61,7 +65,7 @@ describe('POST /v1/prenotazione', () => {
 
     test('Test #22: prenotazione con parametri corretti', async () => {
         let prenotazionePayload = {
-            parcheggioId: 0o0,
+            parcheggioId: parcheggioId,
             tipoPosto: 'normale'
         }
         const response = await request(app)
@@ -71,9 +75,9 @@ describe('POST /v1/prenotazione', () => {
         .send(prenotazionePayload)
         .expect(201);
         expect(response.body.message).toEqual('Prenotazione creata');
-        expect(response.body.createdPrenotazione._id).toEqual(0o0);
-        expect(response.body.createdPrenotazione.parcheggioId).toEqual(0o0);
-        expect(response.body.createdPrenotazione.utenteMail).toEqual('test@unitn.it');
+        expect(`${response.body.createdPrenotazione._id}`).toEqual(`${prenotazioneId._id}`);
+        expect(`${response.body.createdPrenotazione.parcheggioId}`).toEqual(`${parcheggioId._id}`);
+        expect(response.body.createdPrenotazione.utenteMail).toEqual(utenteNormaleMail);
         expect(response.body.createdPrenotazione.dataPrenotazione).toEqual(expect.any(String));
         expect(response.body.createdPrenotazione.tipoPosto).toEqual('Normale');
         expect(response.body.createdPrenotazione.veicolo).toEqual({
@@ -86,9 +90,9 @@ describe('POST /v1/prenotazione', () => {
 describe('GET /v1/prenotazione', () => {
     // Creazione token valido
     var payload = {
-        _id: new mongoose.Types.ObjectId(),
+        _id: mongoose.Schema.Types.ObjectId,
         _type: "UtenteNormale",
-        email: "test@unitn.it"
+        email: utenteNormaleMail
     }
     var options = {
         expiresIn: "1h" // scadenza in un ora
@@ -114,13 +118,11 @@ describe('GET /v1/prenotazione', () => {
 });
 
 describe('DELETE /v1/prenotazione/:prenotazioneId', () => {
-    var prenotazioneId = new mongoose.Types.ObjectId();
-    var parcheggioId = new mongoose.Types.ObjectId();
     // Creazione token valido
     var payload = {
-        _id: new mongoose.Types.ObjectId(),
+        _id: mongoose.Schema.Types.ObjectId,
         _type: "UtenteNormale",
-        email: "test@unitn.it"
+        email: utenteNormaleMail
     }
     var options = {
         expiresIn: "1h" // scadenza in un ora
@@ -131,12 +133,12 @@ describe('DELETE /v1/prenotazione/:prenotazioneId', () => {
         const Prenotazione = require('../models/prenotazione');
         const ParcheggioVigilato = require('../models/parcheggioVigilato');
         Prenotazione.findById = jest.fn().mockResolvedValue({
-            utenteMail: 'test@unitn.it'
+            utenteMail: utenteNormaleMail
         });
         Prenotazione.findByIdAndDelete = jest.fn().mockResolvedValue({
             _id : prenotazioneId,
             parcheggioId : parcheggioId,
-            utenteMail : 'test@unitn.it',
+            utenteMail : utenteNormaleMail,
             dataPrenotazione : new Date(),
             tipoPosto: 'Normale',
             veicolo: {
@@ -168,7 +170,7 @@ describe('DELETE /v1/prenotazione/:prenotazioneId', () => {
         expect(response.body.message).toEqual('Prenotazione cancellata');
         expect(`${response.body.deletedPrenotazione._id}`).toEqual(`${prenotazioneId._id}`);
         expect(`${response.body.deletedPrenotazione.parcheggioId}`).toEqual(`${parcheggioId._id}`);
-        expect(response.body.deletedPrenotazione.utenteMail).toEqual('test@unitn.it');
+        expect(response.body.deletedPrenotazione.utenteMail).toEqual(utenteNormaleMail);
         expect(response.body.deletedPrenotazione.dataPrenotazione).toEqual(expect.any(String));
         expect(response.body.deletedPrenotazione.tipoPosto).toEqual('Normale');
         expect(response.body.deletedPrenotazione.veicolo).toEqual({

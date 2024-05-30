@@ -1,5 +1,12 @@
 const ParcheggioVigilato = require("../models/parcheggioVigilato");
 
+/**
+ * Funzione che controlla se sono ancora disponibili i posti di un certo tipo in un parcheggio,
+ * in caso non lo siano lancia un errore.
+ * @param {Object} parcheggio Parcheggio selezionato
+ * @param {String} tipoPosto Tipo di posto selezionato
+ * @param {String} veicolo Tipo di veicolo selezionato
+ */
 exports.checkPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
     switch(tipoPosto){
         case "disabili":{
@@ -47,7 +54,12 @@ exports.checkPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
 };
 
 
-
+/**
+ * Funzione che aggiunge posti occupati in seguito a una prenotazione.
+ * @param {Object} parcheggio Parcheggio selezionato
+ * @param {String} tipoPosto Tipo di posto selezionato
+ * @param {String} veicolo Tipo di veicolo selezionato 
+ */
 exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
     switch(tipoPosto){
         case "disabili":{
@@ -106,7 +118,12 @@ exports.addPostiOccupati = (parcheggio, tipoPosto, veicolo) => {
     };
 };
 
-//Funzione che diminuisce di uno i posti occupati in seguito all'eliminazione di una prenotazione
+/**
+ * Funzione che diminuisce di uno i posti occupati in seguito all'eliminazione di una prenotazione.
+ * @param {Object} parcheggio Parcheggio selezionato
+ * @param {String} tipoPosto Tipo di posto selezionato
+ * @param {String} veicolo Tipo di veicolo selezionato
+ */
 exports.removePostiOccupati =  (parcheggio, tipoPosto, veicolo) =>{
     switch(tipoPosto){
         case "disabili":{

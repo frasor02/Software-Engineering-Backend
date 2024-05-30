@@ -8,12 +8,12 @@ Si è assunto in progettazione che i postiDisabili e i postiGravidanza siano pos
 Quindi i posti per le auto totali di un parcheggio sarebbero dati da numPostiDisabili + numPostiGravidanza + numPostiAuto
 */
 const parcheggioSchema = mongoose.Schema({
-    _id : { type: mongoose.Schema.Types.ObjectId, required: true},
+    _id : { type: mongoose.Schema.Types.ObjectId, required: true}, // _id parcheggio in db
     nome : { type: String, required: true},
-    posizione : { type: pointSchema, required: true },
-    numPosti : { type: Number, required: true, min: 1, get: v => Math.round(v),set: v => Math.round(v) },
-    isCoperto : { type: Boolean, required: true},
-    statoParcheggio : { type: String, required: true, enum: ["Disponibile", "Non disponibile"]},
+    posizione : { type: pointSchema, required: true }, // posizione (latitudine e longitudine)
+    numPosti : { type: Number, required: true, min: 1, get: v => Math.round(v),set: v => Math.round(v) }, // posti totali
+    isCoperto : { type: Boolean, required: true}, // parcheggio coperto o meno
+    statoParcheggio : { type: String, required: true, enum: ["Disponibile", "Non disponibile"]}, 
     numPostiDisabili : { type: Number, required: true, min: 0, get: v => Math.round(v),set: v => Math.round(v)},
     numPostiGravidanza : { type: Number, required: true, min: 0, get: v => Math.round(v),set: v => Math.round(v)},
     numPostiAuto : { type: Number, required: true, min: 0, get: v => Math.round(v),set: v => Math.round(v)},

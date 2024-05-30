@@ -8,9 +8,21 @@ const Feedback = require('../models/feedback');
 
 /*Logica delle API dirette alla risorsa parcheggi.*/
 
-// funzione utility per la ricerca
+/**
+ * Funzione utility per la ricerca.
+ * @param {Object} res Risposta
+ * @param {Number} long Longitudine selezionata per la ricerca
+ * @param {Number} lat Latitudine selezionata per la ricerca
+ * @param {Boolean} isCoperto Parcheggio coperto o meno
+ * @param {Number} disabili Presenza posti per disabili 
+ * @param {Number} gravidanza Presenza posti per donne in gravidanza 
+ * @param {Number} auto Presenza posti per auto
+ * @param {Number} moto Presenza posti per moto
+ * @param {Number} furgone Presenza posti per furgone
+ * @param {Number} bus Presenza posti per bus
+ */
 function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto, furgone, bus){
-    Parcheggio.find(
+    Parcheggio.find(    // Ricerca secondo i parametri scelti
         {
             statoParcheggio: "Disponibile",
             isCoperto: isCoperto,
@@ -25,7 +37,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
             {
                 $near: 
                 {
-                    $geometry: { type: "Point",  coordinates: [ long, lat ] }
+                    $geometry: { type: "Point",  coordinates: [ long, lat ] }   // Ordinamento dal più vicino alla posizione scelta
 
                 }
             }
@@ -53,7 +65,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
     ) .catch(
         err => {
             console.log(err);
-            res.status(500).json({
+            res.status(500).json({ // Errore nella ricerca
                 error: err
             })
         }
@@ -168,17 +180,17 @@ exports.parcheggio_ricerca = (req, res) => {
       
 }
 
-//Funzione che implementa la chiamata GET a /parcheggio/:parcheggioId
+//Funzione che implementa la chiamata GET a /v1/parcheggio/:parcheggioId
 exports.parcheggio_get = (req, res) => {
     let id;
     try {
         id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
-        if(!mongoose.Types.ObjectId.isValid(id)){
+        if(!mongoose.Types.ObjectId.isValid(id)){ // Controllo validità ID
             throw new Error("Wrong id")
         }
     } catch(err){
         res.status(400).json({
-            error: err.message
+            error: err.message  // formato id del parcheggio non valido
         });
         return; // Risolve "Cannot set headers after they are sent to the client"
     };
@@ -219,7 +231,7 @@ exports.parcheggio_get = (req, res) => {
     )
 }
 
-// Funzione che implementa la chiamata GET a /parcheggio
+// Funzione che implementa la chiamata GET a /v1/parcheggio
 exports.parcheggio_get_all = (req, res) => {
     Parcheggio.find({})
     .select("_id _type nome")
@@ -243,17 +255,17 @@ exports.parcheggio_get_all = (req, res) => {
     })
     .catch( err => {
         console.log(err);
-        res.status(500).json({
+        res.status(500).json({  // Errore nella ricerca
             error: err
         })
     });
 };
 
-// Funzione che implementa la chiamata POST a /parcheggio
+// Funzione che implementa la chiamata POST a /v1/parcheggio
 exports.parcheggio_post = (req, res) => {
     let parcheggio;
     try{
-        if(req.body._type != "ParcheggioFree" &&  req.body._type != "ParcheggioPay" && req.body._type != "ParcheggioVigilato"){
+        if(req.body._type != "ParcheggioFree" &&  req.body._type != "ParcheggioPay" && req.body._type != "ParcheggioVigilato"){ // Controllo validità sul tipo di parcheggio
             throw new Error("undefined _type field");
         };
         if(req.body.nome === ""){ // Controllo che il nome del parcheggio non sia vuoto
@@ -263,7 +275,7 @@ exports.parcheggio_post = (req, res) => {
             case "ParcheggioFree":{
                 if(req.body.isDisco){
                     if(req.body.dataInizio == undefined || req.body.dataFine == undefined){
-                        throw new Error("undefined dataInizio o dataFine");
+                        throw new Error("undefined dataInizio o dataFine"); // Orari del disco orario invalidi
                     }
                     console.log(req.body.dataInizio);
                     parcheggio = new ParcheggioFree({
@@ -342,7 +354,7 @@ exports.parcheggio_post = (req, res) => {
             error: err.message
     });
     }
-    //console.log(parcheggio);
+    
     parcheggio.save().then(result => {
         res.status(201).json({
             message: "Created Parcheggio Successfully",
@@ -375,24 +387,24 @@ exports.parcheggio_post = (req, res) => {
     });
 };
 
-// Funzione che implementa la chiamata PATCH a /parcheggio/:parcheggioId
+// Funzione che implementa la chiamata PATCH a /v1/parcheggio/:parcheggioId
 exports.parcheggio_patch = (req, res) => {
     let id;
     try {
         id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
-        if(!mongoose.Types.ObjectId.isValid(id)){
-            throw new Error("Wrong id")
+        if(!mongoose.Types.ObjectId.isValid(id)){ // Controllo validità ID
+            throw new Error("Wrong id") 
         }
     } catch(err){
         res.status(400).json({
-            error: err.message
+            error: err.message  // formato id del parcheggio non valido
         });
         return; // Risolve "Cannot set headers after they are sent to the client"
     };
     const updateOps = {};
     validParams = ["nome", "posizione", "numPosti", "isCoperto", "statoParcheggio", "numPostiDisabili", "numPostiGravidanza", "numPostiAuto","numPostiMoto","numPostiFurgone","numPostiBus", "isDisco", "dataInizio", "dataFine","tariffa", "postiOccupati"];
     try{
-        for (const ops of req.body) {
+        for (const ops of req.body) {   // Controllo validità parametri della richiesta
             if(ops.propName == "_type" || ops.propName == "_id"){
                 throw new Error("Cant modify property");
             }
@@ -402,12 +414,12 @@ exports.parcheggio_patch = (req, res) => {
             updateOps[ops.propName] = ops.value;
         }
     }catch(err){
-        res.status(400).json({
+        res.status(400).json({  // Errore nella richiesta
             error: err.message
         });
         return;
     }
-    Parcheggio.findByIdAndUpdate(id, updateOps)
+    Parcheggio.findByIdAndUpdate(id, updateOps) // Update parcheggio
     .exec()
     .then(result => {
         res.status(200).json({
@@ -422,29 +434,29 @@ exports.parcheggio_patch = (req, res) => {
         }});
     })
     .catch( err => {
-            res.status(500).json({
+            res.status(500).json({  // Errore ricerca o update
                 error: err.message
             });
     });
 }
 
-//Funzione che implementa la chiamata DELETE a /parcheggio/:parcheggioId
+//Funzione che implementa la chiamata DELETE a /v1/parcheggio/:parcheggioId
 exports.parcheggio_delete = (req, res) => {
     let id;
     try {
         id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1) );
-        if(!mongoose.Types.ObjectId.isValid(id)){
+        if(!mongoose.Types.ObjectId.isValid(id)){ // Controllo validità ID
             throw new Error("Wrong id")
         }
     } catch(err){
         res.status(400).json({
-            error: err.message
+            error: err.message // formato id del parcheggio non valido
         });
         return; // Risolve "Cannot set headers after they are sent to the client"
     };
-    Parcheggio.findByIdAndDelete(id)
+    Parcheggio.findByIdAndDelete(id)    // Ricerca e cancellazione
     .then(result => {
-        if(result === null){
+        if(result === null){    // Parcheggio non trovato
             console.log("parcheggio not found to delete")
             res.status(404).json({
                 error: "parcheggio not found to delete"
@@ -459,8 +471,7 @@ exports.parcheggio_delete = (req, res) => {
                 nome: result.nome
         }});
     }).catch( err => {
-        //console.log(err);
-        res.status(500).json({
+        res.status(500).json({  // Errore ricerca o cancellazione
             error: err.message
         });
     });
@@ -471,7 +482,7 @@ exports.parcheggio_get_prenotazioni = (req, res) => {
     let id;
     try {
         id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
-        if(!mongoose.Types.ObjectId.isValid(id)){
+        if(!mongoose.Types.ObjectId.isValid(id)){   // Controllo validità ID
             throw new Error("Wrong id")
         }
     } catch(err){
@@ -510,7 +521,7 @@ exports.parcheggio_get_feedback = (req, res) => {
     let id;
     try {
         id = mongoose.Types.ObjectId( req.params.parcheggioId.substr(1));
-        if(!mongoose.Types.ObjectId.isValid(id)){
+        if(!mongoose.Types.ObjectId.isValid(id)){   // Controllo validità ID
             throw new Error("Wrong id")
         }
     } catch(err){

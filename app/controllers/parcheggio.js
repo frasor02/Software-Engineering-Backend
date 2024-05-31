@@ -55,7 +55,7 @@ function findRicerca(res, long, lat, isCoperto, disabili, gravidanza, auto, moto
                         nome: doc.nome,
                         request: {
                             type: "GET",
-                            url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/" + doc._id
+                            url: process.env.DEPLOY_URL + "/v1/parcheggio/" + doc._id
                         }
                     }
                 })
@@ -245,7 +245,7 @@ exports.parcheggio_get_all = (req, res) => {
                     nome: doc.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + doc._id
+                        url: process.env.DEPLOY_URL + "/v1/parcheggio/:" + doc._id
                     }
                 }
             })
@@ -364,7 +364,7 @@ exports.parcheggio_post = (req, res) => {
                     nome: result.nome,
                     request: {
                         type: "GET",
-                        url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
+                        url: process.env.DEPLOY_URL  + "/v1/parcheggio/:" + result._id
                     }
                 }
             })}
@@ -429,7 +429,7 @@ exports.parcheggio_patch = (req, res) => {
                 _type: result._type,
                 request: {
                     type: "GET",
-                    url: process.env.DEPLOY_URL + process.env.PORT + "/v1/parcheggio/:" + result._id
+                    url: process.env.DEPLOY_URL + "/v1/parcheggio/:" + result._id
                 }
         }});
     })
